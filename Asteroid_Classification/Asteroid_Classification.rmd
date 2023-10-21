@@ -1,0 +1,49 @@
+---
+title: "Evaluating Asteroid Characteristics and Predicting Hazard Levels Using NASA's Asteroid Classification Dataset"
+authors: "Vishal Bakshi, Pratiksha Dange, Sudanshu Dotel, Qibin Huang"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+---
+  
+```{r init, include=FALSE}
+# some of common options (and the defaults) are: 
+# include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
+library(ezids)
+# knitr::opts_chunk$set(warning = F, results = "markup", message = F)
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+# options(scipen=9, digits = 3) 
+# ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
+# use scipen=999 to prevent scientific notation at all times
+```
+
+```{css, include=FALSE}
+.columns {display: flex;}
+h1 {color: #87CEFA}
+h2 {color:blue}
+```
+
+# Importing Hazardous/Not Asteroid Classification 
+```{r, include=TRUE, echo=TRUE, results='show'}
+current_directory <- getwd()
+data_path <- "Datasets/Astroid_Hazard_Classification.csv"
+# Remove the "Asteroid_Classification" folder from the path
+file_path <- file.path(dirname(current_directory), data_path)
+Ast_raw <- data.frame(read.csv(file_path))
+
+head(Ast_raw)
+
+
+```
+
+
+
+
+
+
