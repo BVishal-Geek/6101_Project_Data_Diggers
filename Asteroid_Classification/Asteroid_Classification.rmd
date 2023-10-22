@@ -66,12 +66,20 @@ h2 {color:blue}
 
 ## Importing Hazardous/Not Asteroid Classification 
 ```{r, include=TRUE, echo=TRUE, results='show'}
-current_directory <- getwd()
-data_path <- "Datasets/Astroid_Hazard_Classification.csv"
-file_path <- file.path(dirname(current_directory), data_path)
-Ast_raw <- data.frame(read.csv(file_path))
+data1<- read.csv("/Users/qibinhuang/Downloads/Astroid_Hazard_Classification.csv")
+Ast_raw <- data.frame(data1)
 head(Ast_raw)
+
 ```
+```{r}
+library(dplyr)
+Ast_raw <- Ast_raw %>%
+mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
+head(Ast_raw)
+
+
+```
+
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 Ast_Subset <- subset(Ast_raw, select = c('Neo.Reference.ID', 'Name', 'Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Relative.Velocity.km.per.sec',  'Orbiting.Body', 'Orbit.Uncertainity', 'Minimum.Orbit.Intersection', 'Jupiter.Tisserand.Invariant', 'Epoch.Osculation', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Asc.Node.Longitude', 'Perihelion.Distance' ))
