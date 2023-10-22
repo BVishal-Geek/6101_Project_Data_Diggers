@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2023-10-21" />
+<meta name="date" content="2023-10-22" />
 
 <title>Evaluating Asteroid Characteristics and Predicting Hazard Levels Using NASA’s Asteroid Classification Dataset</title>
 
@@ -1569,13 +1569,73 @@ border-radius: 0px;
 <h1 class="title toc-ignore">Evaluating Asteroid Characteristics and
 Predicting Hazard Levels Using NASA’s Asteroid Classification
 Dataset</h1>
-<h4 class="date">2023-10-21</h4>
+<h4 class="date">2023-10-22</h4>
 
 </div>
 
 
-<div id="importing-hazardousnot-asteroid-classification" class="section level1">
-<h1>Importing Hazardous/Not Asteroid Classification</h1>
+<div id="column-definitions" class="section level2">
+<h2>Column Definitions:</h2>
+<ol style="list-style-type: decimal">
+<li>Neo Reference ID : ID for the Asteroid.</li>
+<li>Name : Name of the Asteroid.</li>
+<li>Absolute Magnitude: It tells about the brightness of the star i.e.,
+Bright star has low magnitude and Dim star has high magnitude.</li>
+<li>Est Dia in KM(min) : This column tells us the estimated minimum size
+of the asteroid in terms of KM.</li>
+<li>Est Dia in KM(max) : This column tells us the estimated maximum size
+of the asteroid in terms of KM.</li>
+<li>Close Approach Date : The date when the asteroid was very close to
+earth’s atmosphere.</li>
+<li>Epoch Date Close Approach :<br />
+</li>
+<li>Relative Velocity km per sec : The velocity of the asteroid</li>
+<li>Miss Dist.(Astronomical)</li>
+<li>Miss Dist.(lunar)<br />
+</li>
+<li>Miss Dist.(kilometers)<br />
+</li>
+<li>Miss Dist.(miles)<br />
+</li>
+<li>Orbiting Body : Tells us the orbiting body of the celestial
+body</li>
+<li>Orbit ID<br />
+</li>
+<li>Orbit Determination Date<br />
+</li>
+<li>Orbit Uncertainity Minimum</li>
+<li>Orbit Intersection<br />
+</li>
+<li>Jupiter Tisserand Invariant : The JTI is the planet jupyter
+force/pull of the celestial bodies surrounding them. The least JTI is on
+the celestial bodies which is far from the jupiter</li>
+<li>Epoch Osculation :<br />
+</li>
+<li>Eccentricity : Decides the shape of the orbit, i.e., 0 &lt; E &lt; 1
+: Ellispe, E = 1 : Parabola, E &gt; 1 : Hyperbola</li>
+<li>Semi Major Axis :<br />
+</li>
+<li>Inclination :</li>
+<li>Asc Node Longitude :<br />
+</li>
+<li>Orbital Period :<br />
+</li>
+<li>Perihelion Distance :<br />
+</li>
+<li>Perihelion Arg :<br />
+</li>
+<li>Aphelion Dist :</li>
+<li>Perihelion Time :<br />
+</li>
+<li>Mean Anomaly :</li>
+<li>Mean Motion :</li>
+<li>Equinox :</li>
+<li>Hazardous: Target variable, tells us if above variables is affecting
+the asteroid being hazardous to earth.</li>
+</ol>
+</div>
+<div id="importing-hazardousnot-asteroid-classification" class="section level2">
+<h2>Importing Hazardous/Not Asteroid Classification</h2>
 <pre class="r"><code>current_directory &lt;- getwd()
 data_path &lt;- &quot;Datasets/Astroid_Hazard_Classification.csv&quot;
 # Remove the &quot;Asteroid_Classification&quot; folder from the path
