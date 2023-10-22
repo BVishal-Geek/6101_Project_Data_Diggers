@@ -10,7 +10,7 @@ output:
     toc_depth: 3
     toc_float: yes
 ---
-  
+
 ```{r init, include=FALSE}
 # some of common options (and the defaults) are: 
 # include=T, eval=T, echo=T, results='hide'/'asis'/'markup',..., collapse=F, warning=T, message=T, error=T, cache=T, fig.width=6, fig.height=4, fig.dim=c(6,4) #inches, fig.align='left'/'center','right', 
@@ -29,49 +29,52 @@ h1 {color: #87CEFA}
 h2 {color:blue}
 ```
 
-## Column Definitions: 
-1. Neo Reference ID	: ID for the Asteroid.
-2. Name	: Name of the Asteroid. 
-3. Absolute Magnitude: It tells about the brightness of the star i.e., Bright star has low magnitude and Dim star has high magnitude. 
-4. Est Dia in KM(min) : This column tells us the estimated minimum size of the asteroid in terms of KM.
-5. Est Dia in KM(max) : This column tells us the estimated maximum size of the asteroid in terms of KM.
-6. Close Approach Date : The date when the asteroid was very close to earth's atmosphere.
-7. Epoch Date Close Approach :A related date about the asteroid's close approach.	
-8. Relative Velocity km per sec : The velocity of the asteroid
-9. Miss Dist.(Astronomical)	: How far the asteroid came close to Earth, measured in astronomical units.
-10. Miss Dist.(lunar)	: The distance in terms of the Moon's distance from Earth.
-11. Miss Dist.(kilometers) : The closest approach of the asteroid to Earth in kilometers.	
-12. Miss Dist.(miles)	: The closest approach in miles.
-13. Orbiting Body	: Tells us the orbiting body of the celestial body
-14. Orbit ID	: An ID for the asteroid's orbit.
+## Column Definitions:
+
+1.  Neo Reference ID : ID for the Asteroid.
+2.  Name : Name of the Asteroid.
+3.  Absolute Magnitude: It tells about the brightness of the star i.e., Bright star has low magnitude and Dim star has high magnitude.
+4.  Est Dia in KM(min) : This column tells us the estimated minimum size of the asteroid in terms of KM.
+5.  Est Dia in KM(max) : This column tells us the estimated maximum size of the asteroid in terms of KM.
+6.  Close Approach Date : The date when the asteroid was very close to earth's atmosphere.
+7.  Epoch Date Close Approach :A related date about the asteroid's close approach.\
+8.  Relative Velocity km per sec : The velocity of the asteroid
+9.  Miss Dist.(Astronomical) : How far the asteroid came close to Earth, measured in astronomical units.
+10. Miss Dist.(lunar) : The distance in terms of the Moon's distance from Earth.
+11. Miss Dist.(kilometers) : The closest approach of the asteroid to Earth in kilometers.\
+12. Miss Dist.(miles) : The closest approach in miles.
+13. Orbiting Body : Tells us the orbiting body of the celestial body
+14. Orbit ID : An ID for the asteroid's orbit.
 15. Orbit Determination Date: The date when the asteroid's orbit was calculated
-16. Orbit Uncertainity	Minimum : A measure of the uncertainty in the asteroid's orbit
-17. Orbit Intersection:This column tells about where the asteroid's orbit crosses.	
-18. Jupiter Tisserand Invariant	: The JTI is the planet jupyter force/pull of the celestial bodies surrounding them. The least JTI is on the celestial bodies which is far from the jupiter
-19. Epoch Osculation : A specific date related to the asteroid.	
-20. Eccentricity : Decides the shape of the orbit, i.e., 0 < E < 1 : Ellispe, E = 1 : Parabola, E > 1 : Hyperbola
-21. Semi Major Axis :	It tells us about hoow big the asteroid's orbit is.
-22. Inclination	: The tilt of the asteroid's orbit.
+16. Orbit Uncertainity Minimum : A measure of the uncertainty in the asteroid's orbit
+17. Orbit Intersection:This column tells about where the asteroid's orbit crosses.\
+18. Jupiter Tisserand Invariant : The JTI is the planet jupyter force/pull of the celestial bodies surrounding them. The least JTI is on the celestial bodies which is far from the jupiter
+19. Epoch Osculation : A specific date related to the asteroid.
+20. Eccentricity : Decides the shape of the orbit, i.e., 0 \< E \< 1 : Ellispe, E = 1 : Parabola, E \> 1 : Hyperbola
+21. Semi Major Axis : It tells us about hoow big the asteroid's orbit is.
+22. Inclination : The tilt of the asteroid's orbit.
 23. Asc Node Longitude :Where the asteroid's orbit crosses a reference plane.
 24. Orbital Period :This column tells us about how long it takes for the asteroid to complete one orbit
-25. Perihelion Distance :	This column tells us about how close the asteroid gets to the Sun during its orbit
-26. Perihelion Arg : A measure related to the direction of the asteroid's orbit.	
-27. Aphelion Dist	: This column tells us about how  far the asteroid is from the Sun during its orbit
-28. Perihelion Time :	The time when the asteroid is closest to the Sun.
+25. Perihelion Distance : This column tells us about how close the asteroid gets to the Sun during its orbit
+26. Perihelion Arg : A measure related to the direction of the asteroid's orbit.\
+27. Aphelion Dist : This column tells us about how far the asteroid is from the Sun during its orbit
+28. Perihelion Time : The time when the asteroid is closest to the Sun.
 29. Mean Anomaly :A measure of where the asteroid is in its orbit
-30. Mean Motion	: Information about how the asteroid moves in its orbit.
-31. Equinox	: The reference point for the orbital information.
+30. Mean Motion : Information about how the asteroid moves in its orbit.
+31. Equinox : The reference point for the orbital information.
 32. Hazardous: Target variable, tells us if above variables is affecting the asteroid being hazardous to earth. If it's marked as 1, it's considered hazardous; if it's 0, it's not considered dangerous.
 
+## Importing Hazardous/Not Asteroid Classification
 
-
-## Importing Hazardous/Not Asteroid Classification 
 ```{r, include=TRUE, echo=TRUE, results='show'}
-data1<- read.csv("/Users/qibinhuang/Downloads/Astroid_Hazard_Classification.csv")
-Ast_raw <- data.frame(data1)
+current_directory <- getwd()
+data_path <- "Datasets/Astroid_Hazard_Classification.csv"
+file_path <- file.path(dirname(current_directory), data_path)
+Ast_raw <- data.frame(read.csv(file_path))
 head(Ast_raw)
 
 ```
+
 ```{r}
 library(dplyr)
 Ast_raw <- Ast_raw %>%
@@ -81,20 +84,73 @@ head(Ast_raw)
 
 ```
 
-
 ```{r, include=TRUE, echo=TRUE, results='show'}
 Ast_Subset <- subset(Ast_raw, select = c('Neo.Reference.ID', 'Name', 'Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Relative.Velocity.km.per.sec',  'Orbiting.Body', 'Orbit.Uncertainity', 'Minimum.Orbit.Intersection', 'Jupiter.Tisserand.Invariant', 'Epoch.Osculation', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Asc.Node.Longitude', 'Perihelion.Distance' ))
 head(Ast_Subset)
 
 ```
 
+```{r, include=TRUE, echo=TRUE, results='show'}
+
+#To generate the correlation plot between the predictor variables
+
+# Loading the required packages
+library(corrplot)
+library(dplyr)
+
+# Converting the dataset to a data frame
+Ast_Subset <- as.data.frame(Ast_Subset)
+
+# Selecting only the numeric columns from your subset
+numeric_columns <- Ast_Subset[, sapply(Ast_Subset, is.numeric)]
+
+# Computing the correlation matrix
+correlation_matrix <- cor(numeric_columns)
+
+# Creating a correlation plot
+corrplot(correlation_matrix, method = "color", type = "lower", order = "hclust", tl.cex = 0.7)
 
 
+```
+
+```{r, include=TRUE, echo=TRUE, results='show'}
+
+#To generate feature importance
+
+#Install the following  package (if not already)
+#install.packages("randomForest") 
 
 
+library(randomForest)
 
+# Splitting the dataset into predictors (X) and the target variable (Y)
+X <- select(Ast_Subset, -c(Neo.Reference.ID, Name))
+Y <- as.factor(Ast_raw$Hazardous)
 
+# Fitting a Random Forest model to determine feature importance
+set.seed(123)  # Setting a seed for reproducibility
+rf_model <- randomForest(X, Y, ntree = 1000)
 
+# Getting the feature importance
+importance <- importance(rf_model)
 
+# Printing importance
+print(importance)
+varImpPlot(rf_model)
 
+```
+**From the above outputs we can infer the following:**
 
+Absolute Magnitude: This feature holds the highest importance score of 104.07, signifying its significant influence on the model's capability to differentiate between hazardous and non-hazardous asteroids. In other words, the brightness of the asteroid, represented by its absolute magnitude, plays a crucial role in hazard classification.
+
+Est Dia in KM min and Est Dia in KM max: These two features also possess substantial importance scores, 99.01 and 110.43 respectively. This indicates that the estimated diameter of the asteroid in kilometers is of paramount importance when assessing whether an asteroid is hazardous or not.
+
+Relative Velocity km per sec: While still important, this feature has a comparatively lower importance score of 16.29. It suggests that the asteroid's velocity, although not as critical as size and magnitude, does contribute to the model's ability to make predictions regarding hazard levels.
+
+Orbiting Body: This feature's importance score is 0.00, implying that it does not impact the model's hazard classification. It may be a candidate for removal from the feature set since it has no discernible effect on the predictions.
+
+Orbit Uncertainty: With a moderate importance score of 40.64, this feature contributes to determining hazard levels. It suggests that the degree of uncertainty in an asteroid's orbit is a relevant factor in classification.
+
+Minimum Orbit Intersection: This feature carries the highest importance score of 469.03, indicating its central role in classifying asteroids as hazardous or not. The closer an asteroid's orbit intersects with others, the more it influences the hazard classification.
+
+Jupiter Tisserand Invariant, Epoch Osculation, Eccentricity, Semi Major Axis, Inclination, Asc Node Longitude, and Perihelion Distance: These features exhibit varying importance scores. While they may not be as influential as absolute magnitude or asteroid size, they still contribute to the model's predictive ability to some extent. These parameters play a role in shaping the model's understanding of asteroid hazard.
