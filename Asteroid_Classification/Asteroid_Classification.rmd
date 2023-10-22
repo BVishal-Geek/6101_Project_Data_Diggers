@@ -36,32 +36,33 @@ h2 {color:blue}
 4. Est Dia in KM(min) : This column tells us the estimated minimum size of the asteroid in terms of KM.
 5. Est Dia in KM(max) : This column tells us the estimated maximum size of the asteroid in terms of KM.
 6. Close Approach Date : The date when the asteroid was very close to earth's atmosphere.
-7. Epoch Date Close Approach :	
+7. Epoch Date Close Approach :A related date about the asteroid's close approach.	
 8. Relative Velocity km per sec : The velocity of the asteroid
-9. Miss Dist.(Astronomical)	
-10. Miss Dist.(lunar)	
-11. Miss Dist.(kilometers)	
-12. Miss Dist.(miles)	
+9. Miss Dist.(Astronomical)	: How far the asteroid came close to Earth, measured in astronomical units.
+10. Miss Dist.(lunar)	: The distance in terms of the Moon's distance from Earth.
+11. Miss Dist.(kilometers) : The closest approach of the asteroid to Earth in kilometers.	
+12. Miss Dist.(miles)	: The closest approach in miles.
 13. Orbiting Body	: Tells us the orbiting body of the celestial body
-14. Orbit ID	
-15. Orbit Determination Date	
-16. Orbit Uncertainity	Minimum 
-17. Orbit Intersection	
+14. Orbit ID	: An ID for the asteroid's orbit.
+15. Orbit Determination Date: The date when the asteroid's orbit was calculated
+16. Orbit Uncertainity	Minimum : A measure of the uncertainty in the asteroid's orbit
+17. Orbit Intersection:This column tells about where the asteroid's orbit crosses.	
 18. Jupiter Tisserand Invariant	: The JTI is the planet jupyter force/pull of the celestial bodies surrounding them. The least JTI is on the celestial bodies which is far from the jupiter
-19. Epoch Osculation :	
+19. Epoch Osculation : A specific date related to the asteroid.	
 20. Eccentricity : Decides the shape of the orbit, i.e., 0 < E < 1 : Ellispe, E = 1 : Parabola, E > 1 : Hyperbola
-21. Semi Major Axis :	
-22. Inclination	:
-23. Asc Node Longitude :	
-24. Orbital Period :	
-25. Perihelion Distance :	
-26. Perihelion Arg :	
-27. Aphelion Dist	:
-28. Perihelion Time :	
-29. Mean Anomaly :
-30. Mean Motion	: 
-31. Equinox	: 
-32. Hazardous: Target variable, tells us if above variables is affecting the asteroid being hazardous to earth. 
+21. Semi Major Axis :	It tells us about hoow big the asteroid's orbit is.
+22. Inclination	: The tilt of the asteroid's orbit.
+23. Asc Node Longitude :Where the asteroid's orbit crosses a reference plane.
+24. Orbital Period :This column tells us about how long it takes for the asteroid to complete one orbit
+25. Perihelion Distance :	This column tells us about how close the asteroid gets to the Sun during its orbit
+26. Perihelion Arg : A measure related to the direction of the asteroid's orbit.	
+27. Aphelion Dist	: This column tells us about how  far the asteroid is from the Sun during its orbit
+28. Perihelion Time :	The time when the asteroid is closest to the Sun.
+29. Mean Anomaly :A measure of where the asteroid is in its orbit
+30. Mean Motion	: Information about how the asteroid moves in its orbit.
+31. Equinox	: The reference point for the orbital information.
+32. Hazardous: Target variable, tells us if above variables is affecting the asteroid being hazardous to earth. If it's marked as 1, it's considered hazardous; if it's 0, it's not considered dangerous.
+
 
 
 ## Importing Hazardous/Not Asteroid Classification 
