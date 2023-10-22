@@ -29,7 +29,42 @@ h1 {color: #87CEFA}
 h2 {color:blue}
 ```
 
-# Importing Hazardous/Not Asteroid Classification 
+## Column Definitions: 
+1. Neo Reference ID	: ID for the Asteroid.
+2. Name	: Name of the Asteroid. 
+3. Absolute Magnitude: It tells about the brightness of the star i.e., Bright star has low magnitude and Dim star has high magnitude. 
+4. Est Dia in KM(min) : This column tells us the estimated minimum size of the asteroid in terms of KM.
+5. Est Dia in KM(max) : This column tells us the estimated maximum size of the asteroid in terms of KM.
+6. Close Approach Date : The date when the asteroid was very close to earth's atmosphere.
+7. Epoch Date Close Approach :	
+8. Relative Velocity km per sec : The velocity of the asteroid
+9. Miss Dist.(Astronomical)	
+10. Miss Dist.(lunar)	
+11. Miss Dist.(kilometers)	
+12. Miss Dist.(miles)	
+13. Orbiting Body	: Tells us the orbiting body of the celestial body
+14. Orbit ID	
+15. Orbit Determination Date	
+16. Orbit Uncertainity	Minimum 
+17. Orbit Intersection	
+18. Jupiter Tisserand Invariant	: The JTI is the planet jupyter force/pull of the celestial bodies surrounding them. The least JTI is on the celestial bodies which is far from the jupiter
+19. Epoch Osculation :	
+20. Eccentricity : Decides the shape of the orbit, i.e., 0 < E < 1 : Ellispe, E = 1 : Parabola, E > 1 : Hyperbola
+21. Semi Major Axis :	
+22. Inclination	:
+23. Asc Node Longitude :	
+24. Orbital Period :	
+25. Perihelion Distance :	
+26. Perihelion Arg :	
+27. Aphelion Dist	:
+28. Perihelion Time :	
+29. Mean Anomaly :
+30. Mean Motion	: 
+31. Equinox	: 
+32. Hazardous: Target variable, tells us if above variables is affecting the asteroid being hazardous to earth. 
+
+
+## Importing Hazardous/Not Asteroid Classification 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 current_directory <- getwd()
 data_path <- "Datasets/Astroid_Hazard_Classification.csv"
