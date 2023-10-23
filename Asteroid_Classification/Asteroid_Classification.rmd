@@ -138,7 +138,7 @@ print(importance)
 varImpPlot(rf_model)
 
 ```
-**From the above outputs we can infer the following:**
+** From the above outputs we can infer the following:**
 
 Absolute Magnitude: This feature holds the highest importance score of 104.07, signifying its significant influence on the model's capability to differentiate between hazardous and non-hazardous asteroids. In other words, the brightness of the asteroid, represented by its absolute magnitude, plays a crucial role in hazard classification.
 
