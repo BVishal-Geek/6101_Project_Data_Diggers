@@ -18,7 +18,7 @@ library(ezids)
 # knitr::opts_chunk$set(warning = F, results = "markup", message = F)
 knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
-# options(scipen=9, digits = 3) 
+# options(scipen=9, digits = 3)  
 # ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
 # use scipen=999 to prevent scientific notation at all times
 ```
@@ -54,12 +54,12 @@ h2 {color:blue}
 21. Semi Major Axis : It tells us about hoow big the asteroid's orbit is.
 22. Inclination : The tilt of the asteroid's orbit.
 23. Asc Node Longitude :Where the asteroid's orbit crosses a reference plane.
-24. Orbital Period :This column tells us about how long it takes for the asteroid to complete one orbit
+24. Orbital Period : This column tells us about how long it takes for the asteroid to complete one orbit
 25. Perihelion Distance : This column tells us about how close the asteroid gets to the Sun during its orbit
 26. Perihelion Arg : A measure related to the direction of the asteroid's orbit.\
 27. Aphelion Dist : This column tells us about how far the asteroid is from the Sun during its orbit
 28. Perihelion Time : The time when the asteroid is closest to the Sun.
-29. Mean Anomaly :A measure of where the asteroid is in its orbit
+29. Mean Anomaly : A measure of where the asteroid is in its orbit
 30. Mean Motion : Information about how the asteroid moves in its orbit.
 31. Equinox : The reference point for the orbital information.
 32. Hazardous: Target variable, tells us if above variables is affecting the asteroid being hazardous to earth. If it's marked as 1, it's considered hazardous; if it's 0, it's not considered dangerous.
