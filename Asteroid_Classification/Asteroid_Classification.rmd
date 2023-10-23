@@ -53,7 +53,7 @@ h2 {color:blue}
 20. Eccentricity : Decides the shape of the orbit, i.e., 0 \< E \< 1 : Ellispe, E = 1 : Parabola, E \> 1 : Hyperbola
 21. Semi Major Axis : It tells us about hoow big the asteroid's orbit is.
 22. Inclination : The tilt of the asteroid's orbit.
-23. Asc Node Longitude :Where the asteroid's orbit crosses a reference plane.
+23. Asc Node Longitude : Where the asteroid's orbit crosses a reference plane.
 24. Orbital Period : This column tells us about how long it takes for the asteroid to complete one orbit
 25. Perihelion Distance : This column tells us about how close the asteroid gets to the Sun during its orbit
 26. Perihelion Arg : A measure related to the direction of the asteroid's orbit.\
