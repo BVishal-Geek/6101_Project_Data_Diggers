@@ -66,6 +66,7 @@ h2 {color:blue}
 
 ## Importing Hazardous/Not Asteroid Classification
 
+
 ```{r, include=TRUE, echo=TRUE, results='show'}
 current_directory <- getwd()
 data_path <- "Datasets/Astroid_Hazard_Classification.csv"
