@@ -37,9 +37,9 @@ h2 {color:blue}
 4.  Est Dia in KM(min) : This column tells us the estimated minimum size of the asteroid in terms of KM.
 5.  Est Dia in KM(max) : This column tells us the estimated maximum size of the asteroid in terms of KM.
 6.  Close Approach Date : The date when the asteroid was very close to earth's atmosphere.
-7.  Epoch Date Close Approach :A related date about the asteroid's close approach.\
+7.  Epoch Date Close Approach : A related date about the asteroid's close approach.\
 8.  Relative Velocity km per sec : The velocity of the asteroid
-9.  Miss Dist.(Astronomical) : How far the asteroid came close to Earth, measured in astronomical units.
+9.  Miss Dist.(Astronomical) : It tells us how far the asteroid came close to Earth, measured in astronomical units.
 10. Miss Dist.(lunar) : The distance in terms of the Moon's distance from Earth.
 11. Miss Dist.(kilometers) : The closest approach of the asteroid to Earth in kilometers.\
 12. Miss Dist.(miles) : The closest approach in miles.
@@ -47,7 +47,7 @@ h2 {color:blue}
 14. Orbit ID : An ID for the asteroid's orbit.
 15. Orbit Determination Date: The date when the asteroid's orbit was calculated
 16. Orbit Uncertainity Minimum : A measure of the uncertainty in the asteroid's orbit
-17. Orbit Intersection:This column tells about where the asteroid's orbit crosses.\
+17. Orbit Intersection: This column tells about where the asteroid's orbit crosses.\
 18. Jupiter Tisserand Invariant : The JTI is the planet jupyter force/pull of the celestial bodies surrounding them. The least JTI is on the celestial bodies which is far from the jupiter
 19. Epoch Osculation : A specific date related to the asteroid.
 20. Eccentricity : Decides the shape of the orbit, i.e., 0 \< E \< 1 : Ellispe, E = 1 : Parabola, E \> 1 : Hyperbola
@@ -119,7 +119,6 @@ corrplot(correlation_matrix, method = "color", type = "lower", order = "hclust",
 
 #Install the following  package (if not already)
 #install.packages("randomForest") 
-
 
 library(randomForest)
 
