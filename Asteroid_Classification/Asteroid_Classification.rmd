@@ -78,13 +78,15 @@ Ast_raw <- data.frame(read.csv(file_path))
 library(dplyr)
 Ast_raw <- Ast_raw %>%
 mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
-head(Ast_raw[,0:5])
+head(Ast_raw)
 ```
 
 
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
-Ast_Subset <- subset(Ast_raw, select = c('Neo.Reference.ID', 'Name', 'Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Relative.Velocity.km.per.sec',  'Orbiting.Body', 'Orbit.Uncertainity', 'Minimum.Orbit.Intersection', 'Jupiter.Tisserand.Invariant', 'Epoch.Osculation', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Asc.Node.Longitude', 'Perihelion.Distance' ))
+selected_columns <- c('Neo.Reference.ID', 'Name', 'Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Relative.Velocity.km.per.sec', 'Orbit.Uncertainity', 'Minimum.Orbit.Intersection', 'Jupiter.Tisserand.Invariant', 'Epoch.Osculation', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Asc.Node.Longitude', 'Perihelion.Distance', 'Perihelion.Arg', 'Aphelion.Dist', 'Perihelion.Time', 'Mean.Anomaly', 'Mean.Motion', 'Hazardous')
+
+Ast_Subset <- subset(Ast_raw, select = selected_columns)
 head(Ast_Subset)
 
 ```
