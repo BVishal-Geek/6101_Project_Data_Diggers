@@ -139,6 +139,7 @@ print(importance)
 varImpPlot(rf_model)
 
 ```
+
 ** From the above outputs we can infer the following:**
 
 Absolute Magnitude: This feature holds the highest importance score of 104.07, signifying its significant influence on the model's capability to differentiate between hazardous and non-hazardous asteroids. In other words, the brightness of the asteroid, represented by its absolute magnitude, plays a crucial role in hazard classification.
@@ -154,3 +155,57 @@ Orbit Uncertainty: With a moderate importance score of 40.64, this feature contr
 Minimum Orbit Intersection: This feature carries the highest importance score of 469.03, indicating its central role in classifying asteroids as hazardous or not. The closer an asteroid's orbit intersects with others, the more it influences the hazard classification.
 
 Jupiter Tisserand Invariant, Epoch Osculation, Eccentricity, Semi Major Axis, Inclination, Asc Node Longitude, and Perihelion Distance: These features exhibit varying importance scores. While they may not be as influential as absolute magnitude or asteroid size, they still contribute to the model's predictive ability to some extent. These parameters play a role in shaping the model's understanding of asteroid hazard.
+
+
+## Smart Question 4:PratiKsha Dange
+**Question 1: Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance? (Chi-Square Test)** <br>
+- Test: ANOVA Test .<br>
+- Reason: Here we are examining the relationship between orbit uncertainty, mean motion, and inclination (which are likely numeric or continuous variables) and perihelion distance (also a numeric variable).  <br>
+ 
+```{r Q1, include=TRUE, echo=TRUE, results='show'}
+
+# Perform ANOVA for 'OrbitUncertainty' with 'PerihelionDistance'
+orbitU_perihelionDist_anova <- aov(`Orbit.Uncertainity` ~ `Perihelion.Distance`, data                                = Ast_raw)
+summary(orbitU_perihelionDist_anova)
+
+# Perform ANOVA for 'MeanMotion' with 'PerihelionDistance'
+meanM_perihelionDist_anova <- aov(`Mean.Motion` ~ `Perihelion.Distance`, data =                                        Ast_raw)
+summary(meanM_perihelionDist_anova)
+
+# Perform ANOVA for 'Inclination' with 'PerihelionDistance'
+inclination_perihelionDist_anova <- aov(Inclination ~ `Perihelion.Distance`, data =                                       Ast_raw)
+summary(inclination_perihelionDist_anova)
+
+```
+
+**Test 1 - Orbit Uncertainty vs. Perihelion Distance:**
+
+- Df (Degrees of Freedom): There is 1 degree of freedom associated with Perihelion Distance, and 3690 degrees of freedom for residuals.
+- Sum Sq (Sum of Squares): The sum of squares for Perihelion Distance is 381, and for residuals, it's 35756.
+- Mean Sq (Mean Square): The mean square for Perihelion Distance is 381.
+- F value: The F-statistic is 39.4.
+- Pr(>F): The p-value is approximately 3.9e-10, which is extremely small.
+
+**Interpretation:** In this test, the p-value (Pr(>F)) is very small (3.9e-10), which indicates that there is a statistically significant difference in "Orbit Uncertainty" with a change in "Perihelion Distance." This suggests that "Perihelion Distance" has a significant impact on "Orbit Uncertainty."
+
+**Test 2 - Mean Motion vs. Perihelion Distance:**
+
+- Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
+- Sum Sq: The sum of squares for Perihelion Distance is 133, and for residuals, it's 276.
+- Mean Sq: The mean square for Perihelion Distance is 133.
+- F value: The F-statistic is 1777.
+- Pr(>F): The p-value is less than 2e-16, which is extremely small.
+
+**Interpretation:** In this test, the p-value is also very small (much less than 0.001), indicating a highly significant difference in "Mean Motion" with a change in "Perihelion Distance." Thus, "Perihelion Distance" significantly affects "Mean Motion."
+
+**Test 3 - Inclination vs. Perihelion Distance:**
+
+- Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
+- Sum Sq: The sum of squares for Perihelion Distance is 1681, and for residuals, it's 447526.
+- Mean Sq: The mean square for Perihelion Distance is 1681.
+- F value: The F-statistic is 13.9.
+- Pr(>F): The p-value is 2e-04, which is relatively small.
+
+**Interpretation:** In this test, the p-value (Pr(>F)) is smaller than 0.05, indicating a significant difference in "Inclination" concerning changes in "Perihelion Distance." It implies that "Perihelion Distance" has a statistically significant effect on "Inclination," though the significance is not as strong as in the previous tests.
+
+In summary, based on these ANOVA tests, it appears that "Perihelion Distance" has a significant impact on "Orbit Uncertainty," "Mean Motion," and "Inclination," with "Mean Motion" having the most substantial effect, followed by "Orbit Uncertainty" and then "Inclination." The p-values for all three tests suggest that the relationships are statistically significant.
