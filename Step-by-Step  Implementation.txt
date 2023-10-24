@@ -1,4 +1,11 @@
 
+**Question 1: Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance? (Chi-Square Test)**
+   - Test: Chi-Square Test or other suitable test.
+   - Reason: To explore the relationship between orbital parameters (orbit uncertainty, Mean Motion, inclination) and Perihelion Distance.
+
+**Question 2: Does the impact of Perihelion Distance vary with the diameter and velocity of the asteroids? (ANOVA Test)**
+   - Test: ANOVA Test.
+   - Reason: To analyze the interaction between 'Perihelion Distance,' asteroid diameter, and velocity in relation to hazard classification.
 
 **Question 3: Can we measure the impact of eccentricity and Perihelion Distance on asteroid hazard classification using statistical tests?**
 - Test: Chi-Square Test for Independence or Logistic Regression.
@@ -12,18 +19,7 @@ Here's the correct ordered list based on your original intentions:
    - Test: Chi-Square Test for Independence or Logistic Regression.
    - Reason: To understand how 'Hazardous' classifications are related to 'Perihelion' and 'Aphelion' distances.
 
-**Question 3: Can we measure the impact of eccentricity and Perihelion Distance on asteroid hazard classification using statistical tests?**
-   - Test: Chi-Square Test for Independence or Logistic Regression.
-   - Reason: To assess the impact of 'Eccentricity' and 'Perihelion Distance' on the binary 'Hazardous' classification.
-
-**Question 2: Does the impact of Perihelion Distance vary with the diameter and velocity of the asteroids? (ANOVA Test)**
-   - Test: ANOVA Test.
-   - Reason: To analyze the interaction between 'Perihelion Distance,' asteroid diameter, and velocity in relation to hazard classification.
-
 **Question 5: What are the most influential features in predicting whether an asteroid is hazardous?**
    - No specific test mentioned, but you can use feature selection techniques, such as feature importance from machine learning models.
    - Reason: To determine which features have the most influence on predicting asteroid hazard classification.
 
-**Question 1: Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance? (Chi-Square Test)**
-   - Test: Chi-Square Test or other suitable test.
-   - Reason: To explore the relationship between orbital parameters (orbit uncertainty, Mean Motion, inclination) and Perihelion Distance.
