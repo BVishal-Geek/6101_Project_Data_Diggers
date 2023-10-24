@@ -1,7 +1,7 @@
 
 **Question 1: Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance? (Chi-Square Test)**
    - Test: Chi-Square Test or other suitable test.
-   - Reason: To explore the relationship between orbital parameters (orbit uncertainty, Mean Motion, inclination) and Perihelion Distance.
+   - Reason: To explore the relationship between orbital parameters (orbit uncertainty, Mean Motion, inclination) and Perihelion Distance. 
 
 **Question 2: Does the impact of Perihelion Distance vary with the diameter and velocity of the asteroids? (ANOVA Test)**
    - Test: ANOVA Test.
