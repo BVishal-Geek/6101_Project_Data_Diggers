@@ -37,7 +37,7 @@ h2 {color:blue}
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 current_directory <- getwd()
-data_path <- "Datasets/Astroid_Hazard_Classification.csv"
+data_path <- "Datasets/Asteroid_Hazard_Classification.csv"
 file_path <- file.path(dirname(current_directory), data_path)
 Ast_raw <- data.frame(read.csv(file_path))
 ```
@@ -46,7 +46,8 @@ Ast_raw <- data.frame(read.csv(file_path))
 library(dplyr)
 Ast_raw <- Ast_raw %>%
 mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
-head(Ast_raw)
+Ast_raw$Hazardous <- as.factor(Ast_raw$Hazardous)
+str(Ast_raw)
 ```
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
@@ -56,6 +57,65 @@ Ast_Subset <- subset(Ast_raw, select = selected_columns)
 head(Ast_Subset)
 
 ```
+## Histogram plots of Absolute Magnitude, Diameter in Kilo Meters, Relative Velocity, Mean Motion, Aphelion Distance,inclination,  Perihelion Distance
+```{r}
+library(ggplot2)
+
+# Assuming you have a data frame called Ast_Subset
+# Select the columns you want to display in the histogram
+selected_columns <- Ast_Subset[c('Absolute.Magnitude', "Est.Dia.in.KM.min.", "Est.Dia.in.KM.max.", 
+                                 "Relative.Velocity.km.per.sec", "Jupiter.Tisserand.Invariant", 
+                                 "Inclination", "Perihelion.Distance", "Aphelion.Dist", "Mean.Motion")]
+
+# Reshape the data into long format
+library(tidyr)
+Ast_Subset_long <- pivot_longer(selected_columns, 
+                                cols = everything(),
+                                names_to = "Variable", values_to = "Value")
+
+# Create a histogram with different colors for each variable
+ggplot(Ast_Subset_long, aes(x = Value, fill = Variable)) +
+  geom_histogram(bins = 30, alpha = 0.5) +
+  facet_wrap(~Variable, scales = "free") +
+  labs(title = "Histogram of Asteroid Variables") +
+  scale_fill_manual(values = rainbow(length(unique(Ast_Subset_long$Variable))))
+
+```
+```{r}
+
+ggplot(Ast_Subset, aes(x=Hazardous, fill = Hazardous)) + geom_bar() + labs(title="Bar plot of Hazard Columns")
+
+```
+
+
+** Null Hypothesis **: There is no significant difference in perihelion distance for hazardous and non-hazardous asteroids.
+Alternate Hypothesis: There is significant difference in perihelion distance for hazardous and non-hazardous asteroids. 
+```{r Q1}
+
+ggplot(Ast_Subset, aes(Hazardous , Perihelion.Distance, group = Hazardous , fill = Hazardous)) + geom_boxplot() + labs(title="Boxplot of Perihelion Distance ")
+
+ggplot(Ast_Subset, aes(Hazardous , Aphelion.Dist, group = Hazardous, fill = Hazardous)) + geom_boxplot() +labs(title="Boxplot of Aphelion Distance ")
+
+Per_Hazardous <- Ast_Subset$Perihelion.Distance[Ast_Subset$Hazardous == 1]
+Per_Non_Hazardous <- Ast_Subset$Perihelion.Distance[Ast_Subset$Hazardous == 0]
+
+Aph_Hazardous <- Ast_Subset$Aphelion.Dist[Ast_Subset$Hazardous == 1]
+Aph_Non_Hazardous <- Ast_Subset$Aphelion.Dist[Ast_Subset$Hazardous == 0]
+
+
+
+test_per <- t.test(Per_Hazardous, Per_Non_Hazardous)
+test_aph <- t.test(Aph_Hazardous, Aph_Non_Hazardous)
+
+test_per
+test_aph
+
+```
+Observation: 
+
+Perihelion Distance: There is an observable trend where hazardous asteroids tend to exhibit smaller perihelion distances when compared to their non-hazardous counterparts.
+
+Aphelion Distance: A subtle yet statistically significant variation emerges, with asteroids possessing higher aphelion distances demonstrating a slightly increased likelihood of being classified as hazardous. Nevertheless, it's important to note that the means of the two groups remain closely aligned. Thus, we cannot definitively attribute higher aphelion distance as the sole determinant of an asteroid's hazardous classification.
 
 
 ```{r}
@@ -109,7 +169,7 @@ library(randomForest)
 
 # Splitting the dataset into predictors (X) excluding the target variable
 X <- select(Ast_Subset, -c(Hazardous))
-Y <- as.factor(Ast_raw$Hazardous)
+Y <- Ast_raw$Hazardous
 
 # Fitting a Random Forest model to determine feature importance
 set.seed(123)  # Setting a seed for reproducibility
@@ -152,6 +212,9 @@ Orbit Uncertainty: With a moderate importance score of 40.64, this feature contr
 Minimum Orbit Intersection: This feature carries the highest importance score of 469.03, indicating its central role in classifying asteroids as hazardous or not. The closer an asteroid's orbit intersects with others, the more it influences the hazard classification.
 
 Jupiter Tisserand Invariant, Epoch Osculation, Eccentricity, Semi Major Axis, Inclination, Asc Node Longitude, and Perihelion Distance: These features exhibit varying importance scores. While they may not be as influential as absolute magnitude or asteroid size, they still contribute to the model's predictive ability to some extent. These parameters play a role in shaping the model's understanding of asteroid hazard.
+
+
+
 
 ## Smart Question:PratiKsha Dange
 
@@ -204,3 +267,22 @@ summary(inclination_perihelionDist_anova)
 **Interpretation:** In this test, the p-value (Pr(\>F)) is smaller than 0.05, indicating a significant difference in "Inclination" concerning changes in "Perihelion Distance." It implies that "Perihelion Distance" has a statistically significant effect on "Inclination," though the significance is not as strong as in the previous tests.
 
 In summary, based on these ANOVA tests, it appears that "Perihelion Distance" has a significant impact on "Orbit Uncertainty," "Mean Motion," and "Inclination," with "Mean Motion" having the most substantial effect, followed by "Orbit Uncertainty" and then "Inclination." The p-values for all three tests suggest that the relationships are statistically significant.
+
+
+
+```{r, echo=TRUE, results='show'}
+ggplot(Ast_Subset, aes(x = Perihelion.Distance, y = Hazardous)) +
+  geom_point(aes(size=Perihelion.Distance), color = "red") +
+  labs(x = "Perihelion Distance", y = "Hazardous") +
+  ggtitle("Scatter Plot of Hazardous vs. Perihelion Distance")
+
+ggplot(Ast_Subset, aes(x=Hazardous, y = Perihelion.Distance, fill = Hazardous)) + geom_violin(fill = "red") + labs(x = "Hazardous", y = "Perihelion Distance") +
+  scale_fill_manual(values = c("Not Hazardous" = "blue", "Hazardous" = "red")) + # Define custom colors
+  ggtitle("Violin Plot of Hazardous vs. Perihelion Distance")
+```
+
+
+```{r}
+
+
+```

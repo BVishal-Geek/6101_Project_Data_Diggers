@@ -235,6 +235,7 @@ summary(anova_model)
 
 
 ```
+
 ```{r}
 
 # Assuming you have a dataframe 'Ast_Subset' with the relevant columns (Est Dia in KM min, Est Dia in KM max)
