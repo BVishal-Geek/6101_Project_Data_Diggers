@@ -153,9 +153,9 @@ Minimum Orbit Intersection: This feature carries the highest importance score of
 
 Jupiter Tisserand Invariant, Epoch Osculation, Eccentricity, Semi Major Axis, Inclination, Asc Node Longitude, and Perihelion Distance: These features exhibit varying importance scores. While they may not be as influential as absolute magnitude or asteroid size, they still contribute to the model's predictive ability to some extent. These parameters play a role in shaping the model's understanding of asteroid hazard.
 
-## Smart Question 4:PratiKsha Dange
+## Smart Question:PratiKsha Dange
 
-**Question 1: Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance? (Chi-Square Test)** <br> - Test: ANOVA Test .<br> - Reason: Here we are examining the relationship between orbit uncertainty, mean motion, and inclination (which are likely numeric or continuous variables) and perihelion distance (also a numeric variable). <br>
+**Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance?** <br> - Test: ANOVA Test .<br> - Reason: Here we are examining the relationship between orbit uncertainty, mean motion, and inclination (which are likely numeric or continuous variables) and perihelion distance (also a numeric variable). <br>
 
 ```{r Q1, include=TRUE, echo=TRUE, results='show'}
 
