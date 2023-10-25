@@ -31,41 +31,9 @@ h2 {color:blue}
 
 ## Column Definitions:
 
-**1.  Neo Reference ID :** ID for the Asteroid<br>
-**2.  Name :** Name of the Asteroid <br>
-**3.  Absolute Magnitude:** It tells about the brightness of the star i.e., Bright star has low magnitude and Dim star has high magnitude <br>
-**4.  Est Dia in KM(min) :** This column tells us the estimated minimum size of the asteroid in terms of KM <br>
-**5.  Est Dia in KM(max) :** This column tells us the estimated maximum size of the asteroid in terms of KM <br>
-**6.  Close Approach Date :** The date when the asteroid was very close to earth's atmosphere <br>
-**7.  Epoch Date Close Approach :** A related date about the asteroid's close approach <br>
-**8.  Relative Velocity km per sec :** The velocity of the asteroid <br>
-**9.  Miss Dist.(Astronomical) :** It tells us how far the asteroid came close to Earth, measured in astronomical units <br>
-**10. Miss Dist.(lunar) :** The distance in terms of the Moon's distance from Earth <br>
-**11. Miss Dist.(kilometers) :** The closest approach of the asteroid to Earth in kilometers <br>
-**12. Miss Dist.(miles) :** The closest approach in miles <br>
-**13. Orbiting Body :** Tells us the orbiting body of the celestial body <br>
-**14. Orbit ID :** An ID for the asteroid's orbit <br>
-**15. Orbit Determination Date:** The date when the asteroid's orbit was calculated <br>
-**16. Orbit Uncertainity Minimum :** A measure of the uncertainty in the asteroid's orbit<br>
-**17. Orbit Intersection:** This column tells about where the asteroid's orbit crosses <br>
-**18. Jupiter Tisserand Invariant :** The JTI is the planet jupyter force/pull of the celestial bodies surrounding them. The least JTI is on the celestial bodies which is far from the jupiter <br>
-**19. Epoch Osculation :** A specific date related to the asteroid<br>
-**20. Eccentricity :** Decides the shape of the orbit, i.e., 0 \< E \< 1 : Ellispe, E = 1 : Parabola, E \> 1 : Hyperbola <br>
-**21. Semi Major Axis :** It tells us about hoow big the asteroid's orbit is <br>
-**22. Inclination :** The tilt of the asteroid's orbit <br>
-**23. Asc Node Longitude :** Where the asteroid's orbit crosses a reference plane <br>
-**24. Orbital Period :** This column tells us about how long it takes for the asteroid to complete one orbit <br>
-**25. Perihelion Distance :** This column tells us about how close the asteroid gets to the Sun during it's orbit <br>
-**26. Perihelion Arg :** A measure related to the direction of the asteroid's orbit <br>
-**27. Aphelion Dist :** This column tells us about how far the asteroid is from the Sun during it's orbit <br>
-**28. Perihelion Time :** The time when the asteroid is closest to the Sun <br>
-**29. Mean Anomaly :** A measure of where the asteroid is in its orbit <br>
-**30. Mean Motion :** Information about how the asteroid moves in it's orbit <br>
-**31. Equinox :** The reference point for the orbital information <br>
-**32. Hazardous:** Target variable, tells us if above variables is affecting the asteroid being hazardous to earth. If it's marked as 1, it's considered hazardous; if it's 0, it's not considered dangerous <br>
+**1. Neo Reference ID :** ID for the Asteroid<br> **2. Name :** Name of the Asteroid <br> **3. Absolute Magnitude:** It tells about the brightness of the star i.e., Bright star has low magnitude and Dim star has high magnitude <br> **4. Est Dia in KM(min) :** This column tells us the estimated minimum size of the asteroid in terms of KM <br> **5. Est Dia in KM(max) :** This column tells us the estimated maximum size of the asteroid in terms of KM <br> **6. Close Approach Date :** The date when the asteroid was very close to earth's atmosphere <br> **7. Epoch Date Close Approach :** A related date about the asteroid's close approach <br> **8. Relative Velocity km per sec :** The velocity of the asteroid <br> **9. Miss Dist.(Astronomical) :** It tells us how far the asteroid came close to Earth, measured in astronomical units <br> **10. Miss Dist.(lunar) :** The distance in terms of the Moon's distance from Earth <br> **11. Miss Dist.(kilometers) :** The closest approach of the asteroid to Earth in kilometers <br> **12. Miss Dist.(miles) :** The closest approach in miles <br> **13. Orbiting Body :** Tells us the orbiting body of the celestial body <br> **14. Orbit ID :** An ID for the asteroid's orbit <br> **15. Orbit Determination Date:** The date when the asteroid's orbit was calculated <br> **16. Orbit Uncertainity Minimum :** A measure of the uncertainty in the asteroid's orbit<br> **17. Orbit Intersection:** This column tells about where the asteroid's orbit crosses <br> **18. Jupiter Tisserand Invariant :** The JTI is the planet jupyter force/pull of the celestial bodies surrounding them. The least JTI is on the celestial bodies which is far from the jupiter <br> **19. Epoch Osculation :** A specific date related to the asteroid<br> **20. Eccentricity :** Decides the shape of the orbit, i.e., 0 \< E \< 1 : Ellispe, E = 1 : Parabola, E \> 1 : Hyperbola <br> **21. Semi Major Axis :** It tells us about hoow big the asteroid's orbit is <br> **22. Inclination :** The tilt of the asteroid's orbit <br> **23. Asc Node Longitude :** Where the asteroid's orbit crosses a reference plane <br> **24. Orbital Period :** This column tells us about how long it takes for the asteroid to complete one orbit <br> **25. Perihelion Distance :** This column tells us about how close the asteroid gets to the Sun during it's orbit <br> **26. Perihelion Arg :** A measure related to the direction of the asteroid's orbit <br> **27. Aphelion Dist :** This column tells us about how far the asteroid is from the Sun during it's orbit <br> **28. Perihelion Time :** The time when the asteroid is closest to the Sun <br> **29. Mean Anomaly :** A measure of where the asteroid is in its orbit <br> **30. Mean Motion :** Information about how the asteroid moves in it's orbit <br> **31. Equinox :** The reference point for the orbital information <br> **32. Hazardous:** Target variable, tells us if above variables is affecting the asteroid being hazardous to earth. If it's marked as 1, it's considered hazardous; if it's 0, it's not considered dangerous <br>
 
 ## Importing Hazardous/Not Asteroid Classification
-
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 current_directory <- getwd()
@@ -80,8 +48,6 @@ Ast_raw <- Ast_raw %>%
 mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
 head(Ast_raw)
 ```
-
-
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 selected_columns <- c('Neo.Reference.ID', 'Name', 'Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Relative.Velocity.km.per.sec', 'Orbit.Uncertainity', 'Minimum.Orbit.Intersection', 'Jupiter.Tisserand.Invariant', 'Epoch.Osculation', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Asc.Node.Longitude', 'Perihelion.Distance', 'Perihelion.Arg', 'Aphelion.Dist', 'Perihelion.Time', 'Mean.Anomaly', 'Mean.Motion', 'Hazardous')
@@ -116,15 +82,13 @@ corrplot(correlation_matrix, method = "color", type = "lower", order = "hclust",
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 
-#To generate feature importance
-
-#Install the following  package (if not already)
-#install.packages("randomForest") 
+# Install the following package (if not already)
+# install.packages("randomForest")
 
 library(randomForest)
 
-# Splitting the dataset into predictors (X) and the target variable (Y)
-X <- select(Ast_Subset, -c(Neo.Reference.ID, Name))
+# Splitting the dataset into predictors (X) excluding the target variable
+X <- select(Ast_Subset, -c(Neo.Reference.ID, Name, Hazardous))
 Y <- as.factor(Ast_raw$Hazardous)
 
 # Fitting a Random Forest model to determine feature importance
@@ -136,11 +100,24 @@ importance <- importance(rf_model)
 
 # Printing importance
 print(importance)
-varImpPlot(rf_model)
+
+
+library(ggplot2)
+
+# Get feature importance as a data frame
+importance_df <- as.data.frame(importance(rf_model))
+
+# Create a custom feature importance plot
+ggplot(importance_df, aes(x = reorder(rownames(importance_df), -MeanDecreaseGini), y = MeanDecreaseGini)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(x = "Features", y = "Mean Decrease in Gini Index") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ggtitle("Feature Importance in Asteroid Hazard Prediction")
 
 ```
 
-** From the above outputs we can infer the following:**
+\*\* From the above outputs we can infer the following:\*\*
 
 Absolute Magnitude: This feature holds the highest importance score of 104.07, signifying its significant influence on the model's capability to differentiate between hazardous and non-hazardous asteroids. In other words, the brightness of the asteroid, represented by its absolute magnitude, plays a crucial role in hazard classification.
 
@@ -156,12 +133,10 @@ Minimum Orbit Intersection: This feature carries the highest importance score of
 
 Jupiter Tisserand Invariant, Epoch Osculation, Eccentricity, Semi Major Axis, Inclination, Asc Node Longitude, and Perihelion Distance: These features exhibit varying importance scores. While they may not be as influential as absolute magnitude or asteroid size, they still contribute to the model's predictive ability to some extent. These parameters play a role in shaping the model's understanding of asteroid hazard.
 
-
 ## Smart Question 4:PratiKsha Dange
-**Question 1: Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance? (Chi-Square Test)** <br>
-- Test: ANOVA Test .<br>
-- Reason: Here we are examining the relationship between orbit uncertainty, mean motion, and inclination (which are likely numeric or continuous variables) and perihelion distance (also a numeric variable).  <br>
- 
+
+**Question 1: Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance? (Chi-Square Test)** <br> - Test: ANOVA Test .<br> - Reason: Here we are examining the relationship between orbit uncertainty, mean motion, and inclination (which are likely numeric or continuous variables) and perihelion distance (also a numeric variable). <br>
+
 ```{r Q1, include=TRUE, echo=TRUE, results='show'}
 
 # Perform ANOVA for 'OrbitUncertainty' with 'PerihelionDistance'
@@ -180,32 +155,32 @@ summary(inclination_perihelionDist_anova)
 
 **Test 1 - Orbit Uncertainty vs. Perihelion Distance:**
 
-- Df (Degrees of Freedom): There is 1 degree of freedom associated with Perihelion Distance, and 3690 degrees of freedom for residuals.
-- Sum Sq (Sum of Squares): The sum of squares for Perihelion Distance is 381, and for residuals, it's 35756.
-- Mean Sq (Mean Square): The mean square for Perihelion Distance is 381.
-- F value: The F-statistic is 39.4.
-- Pr(>F): The p-value is approximately 3.9e-10, which is extremely small.
+-   Df (Degrees of Freedom): There is 1 degree of freedom associated with Perihelion Distance, and 3690 degrees of freedom for residuals.
+-   Sum Sq (Sum of Squares): The sum of squares for Perihelion Distance is 381, and for residuals, it's 35756.
+-   Mean Sq (Mean Square): The mean square for Perihelion Distance is 381.
+-   F value: The F-statistic is 39.4.
+-   Pr(\>F): The p-value is approximately 3.9e-10, which is extremely small.
 
-**Interpretation:** In this test, the p-value (Pr(>F)) is very small (3.9e-10), which indicates that there is a statistically significant difference in "Orbit Uncertainty" with a change in "Perihelion Distance." This suggests that "Perihelion Distance" has a significant impact on "Orbit Uncertainty."
+**Interpretation:** In this test, the p-value (Pr(\>F)) is very small (3.9e-10), which indicates that there is a statistically significant difference in "Orbit Uncertainty" with a change in "Perihelion Distance." This suggests that "Perihelion Distance" has a significant impact on "Orbit Uncertainty."
 
 **Test 2 - Mean Motion vs. Perihelion Distance:**
 
-- Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
-- Sum Sq: The sum of squares for Perihelion Distance is 133, and for residuals, it's 276.
-- Mean Sq: The mean square for Perihelion Distance is 133.
-- F value: The F-statistic is 1777.
-- Pr(>F): The p-value is less than 2e-16, which is extremely small.
+-   Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
+-   Sum Sq: The sum of squares for Perihelion Distance is 133, and for residuals, it's 276.
+-   Mean Sq: The mean square for Perihelion Distance is 133.
+-   F value: The F-statistic is 1777.
+-   Pr(\>F): The p-value is less than 2e-16, which is extremely small.
 
 **Interpretation:** In this test, the p-value is also very small (much less than 0.001), indicating a highly significant difference in "Mean Motion" with a change in "Perihelion Distance." Thus, "Perihelion Distance" significantly affects "Mean Motion."
 
 **Test 3 - Inclination vs. Perihelion Distance:**
 
-- Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
-- Sum Sq: The sum of squares for Perihelion Distance is 1681, and for residuals, it's 447526.
-- Mean Sq: The mean square for Perihelion Distance is 1681.
-- F value: The F-statistic is 13.9.
-- Pr(>F): The p-value is 2e-04, which is relatively small.
+-   Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
+-   Sum Sq: The sum of squares for Perihelion Distance is 1681, and for residuals, it's 447526.
+-   Mean Sq: The mean square for Perihelion Distance is 1681.
+-   F value: The F-statistic is 13.9.
+-   Pr(\>F): The p-value is 2e-04, which is relatively small.
 
-**Interpretation:** In this test, the p-value (Pr(>F)) is smaller than 0.05, indicating a significant difference in "Inclination" concerning changes in "Perihelion Distance." It implies that "Perihelion Distance" has a statistically significant effect on "Inclination," though the significance is not as strong as in the previous tests.
+**Interpretation:** In this test, the p-value (Pr(\>F)) is smaller than 0.05, indicating a significant difference in "Inclination" concerning changes in "Perihelion Distance." It implies that "Perihelion Distance" has a statistically significant effect on "Inclination," though the significance is not as strong as in the previous tests.
 
 In summary, based on these ANOVA tests, it appears that "Perihelion Distance" has a significant impact on "Orbit Uncertainty," "Mean Motion," and "Inclination," with "Mean Motion" having the most substantial effect, followed by "Orbit Uncertainty" and then "Inclination." The p-values for all three tests suggest that the relationships are statistically significant.
