@@ -18,6 +18,6 @@ Team Members:
 1.	Vishal Bakshi
 2.	Pratiksha Dange: pratiksha.dange@gwu.edu 
 3.	Sudhanshu Dhotel
-4.	Qibin Huang
+4.	Qibin Huang : qibin.huang@gwmail.gwu.edu
 
 
