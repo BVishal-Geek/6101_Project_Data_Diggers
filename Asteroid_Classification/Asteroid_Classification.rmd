@@ -57,16 +57,23 @@ head(Ast_Subset)
 
 ```
 
-```{r, include=TRUE, echo=TRUE, results='show'}
 
+```{r}
 #To generate the correlation plot between the predictor variables
 
-# Loading the required packages
-library(corrplot)
-library(dplyr)
+# Install and load the required packages
+# Install if not already installed
+# install.packages("ggplot2")
+# install.packages("heatmaply")
+library(ggplot2)
+library(heatmaply)
+library(RColorBrewer)  # Explicitly load RColorBrewer
 
-# Converting the dataset to a data frame
+# Converting the dataset to a data frame (if not already done)
 Ast_Subset <- as.data.frame(Ast_Subset)
+
+# Exclude the "Name" and "Neo.Reference.ID" columns
+Ast_Subset <- Ast_Subset[, !(names(Ast_Subset) %in% c("Name", "Neo.Reference.ID"))]
 
 # Selecting only the numeric columns from your subset
 numeric_columns <- Ast_Subset[, sapply(Ast_Subset, is.numeric)]
@@ -74,11 +81,24 @@ numeric_columns <- Ast_Subset[, sapply(Ast_Subset, is.numeric)]
 # Computing the correlation matrix
 correlation_matrix <- cor(numeric_columns)
 
-# Creating a correlation plot
-corrplot(correlation_matrix, method = "color", type = "lower", order = "hclust", tl.cex = 0.7)
+# Create a correlation heatmap with the "RdYlBu" color palette from RColorBrewer
+heatmaply(correlation_matrix, 
+          col = colorRampPalette(brewer.pal(11, "RdYlBu"))(256),  # Choose the "RdYlBu" palette
+          fontsize_col = 10,   # Adjust font size
+          width = 800,         # Adjust plot width
+          height = 600,        # Adjust plot height
+          main = "Correlation Heatmap of Predictor Variables")
+
+
 
 
 ```
+
+
+
+
+
+
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 
@@ -88,7 +108,7 @@ corrplot(correlation_matrix, method = "color", type = "lower", order = "hclust",
 library(randomForest)
 
 # Splitting the dataset into predictors (X) excluding the target variable
-X <- select(Ast_Subset, -c(Neo.Reference.ID, Name, Hazardous))
+X <- select(Ast_Subset, -c(Hazardous))
 Y <- as.factor(Ast_raw$Hazardous)
 
 # Fitting a Random Forest model to determine feature importance
