@@ -1,14 +1,14 @@
 Here's the correct ordered list based on your original intentions:
 
-**Question 1: How do the hazard classifications of asteroids relate to their proximity to Earth in terms of Perihelion and Aphelion distances?**
+Question 1: How do the hazard classifications of asteroids relate to their proximity to Earth in terms of Perihelion and Aphelion distances?**
    - Test: Chi-Square Test for Independence or Logistic Regression.
    - Reason: To understand how 'Hazardous' classifications are related to 'Perihelion' and 'Aphelion' distances.
 
-**Question 2: Does the impact of Perihelion Distance vary with the diameter and velocity of the asteroids? (ANOVA Test)**
+Question 2: Does the impact of Perihelion Distance vary with the diameter and velocity of the asteroids? (ANOVA Test)**
    - Test: ANOVA Test.
    - Reason: To analyze the interaction between 'Perihelion Distance,' asteroid diameter, and velocity in relation to hazard classification.
 
-**Question 3: Can we measure the impact of eccentricity and Perihelion Distance on asteroid hazard classification using statistical tests?**
+Question 3: Can we measure the impact of eccentricity and Perihelion Distance on asteroid hazard classification using statistical tests?**
 - Test: Chi-Square Test for Independence or Logistic Regression.  
 - Reason: To assess the impact of 'Eccentricity' and 'Perihelion Distance' on the binary 'Hazardous' classification.
 
