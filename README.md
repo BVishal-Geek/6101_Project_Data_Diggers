@@ -8,7 +8,7 @@ This project aims to analyze this dataset to gain insights into the properties a
 Our primary objectives include understanding the physical and orbital characteristics of NEOs, identifying the most critical variables impacting asteroid classification.
 
 ### Dataset: 
-Our dataset is available as Nasa Asteroids Classification: https://www.kaggle.com/datasets/shrutimehta/nasa-asteroids-classification at Kaggle. All the data is from the (http://neo.jpl.nasa.gov/). This API is maintained by Space Rocks Team: David Greenfield, Arezu Sarvestani, Jason English, and Peter Baunach. The dataset consists of 4687 data instances (rows) and 40 features (columns). ![image](https://github.com/BVishal-Geek/6101_Project_Data_Diggers/assets/143216839/e1c68471-f818-4f35-af8b-fd785865220c)
+Our dataset is available as Nasa Asteroids Classification: https://www.kaggle.com/datasets/shrutimehta/nasa-asteroids-classification at Kaggle. All the data is from the (http://neo.jpl.nasa.gov/). This API is maintained by Space Rocks Team: David Greenfield, Arezu Sarvestani, Jason English, and Peter Baunach. The dataset consists of 4687 data instances (rows) and 40 features (columns).
 
 
 #### Authors:
