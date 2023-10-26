@@ -3,7 +3,7 @@
 # Project Name: 
 ## EVALUATING ASTEROID CHARACTERISTICS AND PREDICTING HAZARD LEVELS USING NASA'S ASTEROID CLASSIFICATION DATASET
 
-### Project Description: 
+### Project Description:  
 Our research project centers on NASA's Asteroid Classification dataset, a comprehensive repository of information on near-Earth objects (NEOs). 
 This project aims to analyze this dataset to gain insights into the properties and classifications of asteroids, particularly those categorized as potentially hazardous or non-hazardous. 
 Our primary objectives include understanding the physical and orbital characteristics of NEOs, identifying the most critical variables impacting asteroid classification.
