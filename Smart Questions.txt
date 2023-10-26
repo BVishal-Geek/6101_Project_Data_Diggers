@@ -1,5 +1,5 @@
 Smart Questions: 
-
+ 
 1. How do the hazard classifications of asteroids relate to their proximity to Earth in terms of perihelion and aphelion distances?
 3. Can we measure the impact of eccentricity and perihelion distance on asteroid hazard classification using statistical tests?
 2. Does the impact of perhelion distance vary with the diameter and the velocity of the asteroids ? - Anova Test
