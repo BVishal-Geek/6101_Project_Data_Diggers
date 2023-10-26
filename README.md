@@ -1,6 +1,7 @@
 ### Team 5: Data_Diggers
 
-# Project Name: ## EVALUATING ASTEROID CHARACTERISTICS AND PREDICTING HAZARD LEVELS USING NASA'S ASTEROID CLASSIFICATION DATASET
+# Project Name: 
+## EVALUATING ASTEROID CHARACTERISTICS AND PREDICTING HAZARD LEVELS USING NASA'S ASTEROID CLASSIFICATION DATASET
 
 ### Project Description: 
 Our research project centers on NASA's Asteroid Classification dataset, a comprehensive repository of information on near-Earth objects (NEOs). 
