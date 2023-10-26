@@ -1,4 +1,4 @@
-# Team: 6101_Project_Data_Diggers
+### Team: 6101_Project_Data_Diggers
 
 # Project Name: EVALUATING ASTEROID CHARACTERISTICS AND PREDICTING HAZARD LEVELS USING NASA'S ASTEROID CLASSIFICATION DATASET
 
@@ -7,7 +7,9 @@ Our research project centers on NASA's Asteroid Classification dataset, a compre
 This project aims to analyze this dataset to gain insights into the properties and classifications of asteroids, particularly those categorized as potentially hazardous or non-hazardous. 
 Our primary objectives include understanding the physical and orbital characteristics of NEOs, identifying the most critical variables impacting asteroid classification.
 
-# Authors:
+### Dataset
+
+#### Authors:
 Team Members:
 1.	Vishal Bakshi
 2.	Pratiksha Dange
@@ -15,9 +17,9 @@ Team Members:
 4.	Qibin Huang
 
 # Contact Detils:
-1.	Vishal Bakshi
-2.	Pratiksha Dange: pratiksha.dange@gwu.edu 
+1.	Vishal Bakshi:    vishal.bakshi@gwu.edu
+2.	Pratiksha Dange:  pratiksha.dange@gwu.edu 
 3.	Sudhanshu Dhotel: sudhanshu.dotel@gwu.edu
-4.	Qibin Huang : qibin.huang@gwmail.gwu.edu
+4.	Qibin Huang :     qibin.huang@gwmail.gwu.edu
 
 
