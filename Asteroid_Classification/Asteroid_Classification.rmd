@@ -40,7 +40,7 @@ current_directory <- getwd()
 data_path <- "Datasets/Asteroid_Hazard_Classification.csv"
 file_path <- file.path(dirname(current_directory), data_path)
 Ast_raw <- data.frame(read.csv(file_path))
-```
+```    
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 library(dplyr)
