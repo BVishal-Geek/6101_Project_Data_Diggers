@@ -272,7 +272,6 @@ ggplot(Ast_Subset, aes(x=Hazardous, y = Perihelion.Distance, fill = Hazardous)) 
   ggtitle("Violin Plot of Hazardous vs. Perihelion Distance")
 ```
 
-
 ```{r}
 
 
