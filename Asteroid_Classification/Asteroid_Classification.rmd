@@ -26,7 +26,7 @@ options(scientific=T, digits = 3)
 ```{css, include=FALSE}
 .columns {display: flex;}
 h1 {color: #87CEFA}
-h2 {color:blue}
+h2 {color:blue}     
 ```
 ## Column Definitions:
 
