@@ -117,7 +117,6 @@ Perihelion Distance: There is an observable trend where hazardous asteroids tend
 
 Aphelion Distance: A subtle yet statistically significant variation emerges, with asteroids possessing higher aphelion distances demonstrating a slightly increased likelihood of being classified as hazardous. Nevertheless, it's important to note that the means of the two groups remain closely aligned. Thus, we cannot definitively attribute higher aphelion distance as the sole determinant of an asteroid's hazardous classification.
 
-
 ```{r}
 #To generate the correlation plot between the predictor variables
 
