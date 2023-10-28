@@ -259,8 +259,6 @@ summary(inclination_perihelionDist_anova)
 
 In summary, based on these ANOVA tests, it appears that "Perihelion Distance" has a significant impact on "Orbit Uncertainty," "Mean Motion," and "Inclination," with "Mean Motion" having the most substantial effect, followed by "Orbit Uncertainty" and then "Inclination." The p-values for all three tests suggest that the relationships are statistically significant.
 
-
-
 ```{r, echo=TRUE, results='show'}
 ggplot(Ast_Subset, aes(x = Perihelion.Distance, y = Hazardous)) +
   geom_point(aes(size=Perihelion.Distance), color = "red") +
