@@ -150,8 +150,6 @@ heatmaply(correlation_matrix,
           main = "Correlation Heatmap of Predictor Variables")
 
 
-
-
 ```
 
 
