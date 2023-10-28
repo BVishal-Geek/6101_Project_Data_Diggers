@@ -145,8 +145,6 @@ heatmaply(correlation_matrix,
           width = 800,         # Adjust plot width
           height = 600,        # Adjust plot height
           main = "Correlation Heatmap of Predictor Variables")
-
-
 ```
 
 
