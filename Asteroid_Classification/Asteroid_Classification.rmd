@@ -80,7 +80,7 @@ ggplot(Ast_Subset_long, aes(x = Value, fill = Variable)) +
   labs(title = "Histogram of Asteroid Variables") +
   scale_fill_manual(values = rainbow(length(unique(Ast_Subset_long$Variable))))
 
-```
+```   
 ```{r}
 
 ggplot(Ast_Subset, aes(x=Hazardous, fill = Hazardous)) + geom_bar() + labs(title="Bar plot of Hazard Columns")
