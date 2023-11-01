@@ -18,6 +18,7 @@ knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 library(dplyr)
 library(kableExtra)
+library(ggplot2)
 
 # options(scipen=9, digits = 3)  
 # ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
@@ -69,7 +70,7 @@ file_path <- file.path(dirname(current_directory), data_path)
 Ast_raw <- data.frame(read.csv(file_path))
 
 kable(summary(Ast_raw), "html") %>%
-  kable_styling(full_width = FALSE) %>% 
+  kable_paper(full_width = FALSE) %>% 
   scroll_box(width = "100%", height = "400px")
 ```
 
@@ -77,9 +78,7 @@ kable(summary(Ast_raw), "html") %>%
 
 ## Data Preprocessing
 
-In the data Pre-processing with respect to the dataframe: 
-
-Step : 1 : Converting the Hazard column from string to integer, and into categorical.
+### Step : 1 : Converting the Hazard column from string to integer, and into categorical.
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 Ast_raw <- Ast_raw %>%
@@ -88,25 +87,25 @@ Ast_raw$Hazardous <- as.factor(Ast_raw$Hazardous)
 ```
 
 
-Step : 2 : Dropping columns which are not required for our analysis:
+### Step : 2 : Dropping columns which are not required for our analysis:
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 # Load required libraries
 library(knitr)
 library(kableExtra)
 
-selected_columns <- c('Neo.Reference.ID', 'Name', 'Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Relative.Velocity.km.per.sec', 'Orbit.Uncertainity', 'Jupiter.Tisserand.Invariant', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Perihelion.Distance', 'Aphelion.Dist', 'Perihelion.Time', 'Mean.Motion', 'Hazardous')
+selected_columns <- c('Neo.Reference.ID', 'Name', 'Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Relative.Velocity.km.per.sec', 'Orbit.Uncertainity', 'Jupiter.Tisserand.Invariant', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Perihelion.Distance', 'Aphelion.Dist', 'Mean.Motion', 'Hazardous')
 
 Ast_Subset <- subset(Ast_raw, select = selected_columns)
 
 # Create a nicely formatted table
 kable(Ast_Subset, "html") %>%
-  kable_styling(full_width = FALSE) %>% 
+  kable_paper(full_width = FALSE) %>% 
   scroll_box(width = "100%", height = "400px")
 
 ```
 
-Step : 3 : Outlier Check: 
+### Step : 3 : Outlier Check: 
 
 ```{r}
 find_outliers <- function(x) {
@@ -160,21 +159,29 @@ shapiro.test(data_cleaned_max$Est.Dia.in.KM.max.)
 #the p-values for both the minimum and maximum asteroid diameters are less than 2e-16, indicating that the data significantly deviates from a normal distribution.
 
 ```
+### Step : 4 : Checking for Normal Distribution using QQ-Plot
+
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
 # Load the ggplot2 package
 library(ggplot2)
 
 kable(summary(Ast_Subset), "html") %>%
-  kable_styling(full_width = FALSE) %>% 
+  kable_paper(full_width = FALSE) %>% 
   scroll_box(width = "100%", height = "400px")
 
 # Create a Q-Q plot
-qqnorm(Ast_Subset$Perihelion.Distance, main = "Q-Q Plot")
+qqnorm(Ast_Subset$Perihelion.Distance, main = "Q-Q Plot of Perihelion Distance")
 
 # Add a Q-Q line (e.g., line for the normal distribution)
 qqline(Ast_Subset$Perihelion.Distance, distribution = qnorm)
 
+
+# Create a Q-Q plot
+qqnorm(Ast_Subset$Aphelion.Dist, main = "Q-Q Plot of Aphelion Distance")
+
+# Add a Q-Q line (e.g., line for the normal distribution )
+qqline(Ast_Subset$Aphelion.Dist, distribution = qnorm)
 ```
 
 ## Data Visualization : 
@@ -182,7 +189,8 @@ qqline(Ast_Subset$Perihelion.Distance, distribution = qnorm)
 ## Histogram plots to check the distribution
 
 ### Part 1: Checking Histograms for Distributions
-#### Part 2.1 : Absolute Magnitude, Estimated Diameter (Min), Estimated Diameter (Max) 
+
+#### Part 1.1 : Absolute Magnitude, Estimated Diameter (Min), Estimated Diameter (Max) 
 
 ```{r}
 library(ggplot2)
@@ -210,7 +218,7 @@ ggplot(Ast_Subset_long_1, aes(x = Value, fill = Variable, color = "black")) +
 
 ```
 
-### Part 2 : Histograms for Velocity, Orbit Uncertainity, Jupiter Tisserand Invariant
+### Part 1.2 : Histograms for Velocity, Orbit Uncertainity, Jupiter Tisserand Invariant
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
@@ -236,6 +244,8 @@ ggplot(Ast_Subset_long_2, aes(x = Value, fill = Variable, color = "black")) +
 
 ```
 
+### Part 1.3 : Histograms for Eccentricity, Semi Major Axis, inclination. 
+
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
 # Create a histogram for 'Eccentricity', 'Semi.Major.Axis', and 'Inclination'
@@ -260,9 +270,11 @@ ggplot(Ast_Subset_long_3, aes(x = Value, fill = Variable, color = "black")) +
 
 ```
 
+### Part 1.4 : Histogram for Perihelion Distance, Aphelion Distance, Mean Motion 
+
 ```{r, include=TRUE, echo=TRUE, results='asis'}
-# Create a histogram for 'Perihelion.Distance', 'Aphelion.Dist', 'Perihelion.Time', 'Mean.Motion'
-selected_columns_4 <- Ast_Subset[c('Perihelion.Distance', 'Aphelion.Dist', 'Perihelion.Time', 'Mean.Motion')]
+# Create a histogram for 'Perihelion.Distance', 'Aphelion.Dist', 'Mean.Motion'
+selected_columns_4 <- Ast_Subset[c('Perihelion.Distance', 'Aphelion.Dist', 'Mean.Motion')]
 
 # Reshape the data into long format
 Ast_Subset_long_4 <- pivot_longer(selected_columns_4, 
@@ -295,6 +307,61 @@ pie(counts, labels = labels, main = "Distribution of Asteroids by Hazardous Stat
 When going to the distributions of the hazardous column. It is clearly visible that the Non-Hazardous Asteroids are more compared to Hazardous.
 The data is Asymmetrical. 
 Considering the 3000 minimum rows rule, leveling/making data symmetrical is not a viable option right now. 
+
+
+## Understanding Patterns With Respect To Domain Knowledge
+### Part: 1: JTI vs Eccentricity
+```{r, include=TRUE, echo=TRUE, results='asis'}
+# Load the ggplot2 package
+library(ggplot2)
+
+
+
+# Create a scatter plot with color based on a categorical variable
+ggplot(Ast_Subset, aes(x = Jupiter.Tisserand.Invariant, y = Eccentricity, color = Hazardous)) +
+  geom_point() +
+  labs(title = "Scatter Plot with Hazardous", x = "JTI", y = "Eccentricity") +
+  scale_color_discrete(name = "JTI vs Eccentricity") 
+
+```
+### Part 2 : Perihelion vs Eccentricity With Respect To Hazardous
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+library(plotly)
+
+
+# Create a 3D scatter plot
+plot <- ggplot(Ast_Subset, aes(x = Eccentricity, y = Perihelion.Distance, z = Hazardous, color = Hazardous)) +
+  geom_point() +
+  labs(title = "3D Scatter Plot with Hazardous", x = "Eccentricity", y = "Perihelion Distance", z = "Hazardous") +
+  scale_color_discrete(name = "JTI vs Eccentricity")
+
+# Convert the ggplot plot to a 3D plotly plot
+plotly_plot <- ggplotly(plot)
+
+# Show the interactive 3D plot
+plotly_plot
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
