@@ -1,0 +1,172 @@
+---
+title: "Summary Paper"
+authors: "Vishal Bakshi, Pratiksha Dange, Sudanshu Dotel, Qibin Huang"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes 
+---
+# Project Topic :  <br>
+
+## Evaluating Asteroid Characteristics and Predicting Hazard Levels Using NASA's Asteroid Classification Dataset <br>
+
+### 1. ABSTRACT :
+
+<span style="font-size: 20px;">
+Asteroids, celestial bodies hurtling through space, have long captured the curiosity of scientists and the imagination of the public. Their potential threat to our planet has led to extensive research and monitoring efforts. This project delves into the realm of NASA's Asteroid Classification, a comprehensive repository of information on near-Earth objects (NEOs), aiming to determine whether an asteroid is hazardous or not.
+<P>The objective of this project is understanding the various physical and orbital characteristics of NEOs, identifying the most critical variables impacting asteroid classification between hazardous and non-hazardous asteroids. We explore a diverse set of factors, including an asteroid's size, speed, orbital characteristics, and proximity to Earth, to make this critical determination.
+<P>In an age where space exploration and planetary defense are of paramount importance, the ability to accurately classify and predict the hazard level of asteroids holds significant value. This project is not only academically intriguing but also serves as a practical step towards safeguarding our planet from potential cosmic threats.
+<P>By leveraging data provided by NASA and employing EDA (Exploratory Data Analysis), we aim to contribute to our understanding of asteroid dynamics and risk assessment. The findings of this project have the potential to influence space policy, planetary defense strategies, and the broader field of astronomy.
+<P>
+The project's abstract sets the stage for a comprehensive investigation into NASA's Asteroid Classification and its implications, showcasing the project's significance in the realm of space science and planetary safety.</P>
+</span>
+
+### 2. INTRODUCTION :
+<span style="font-size: 20px;">
+Imagine the vastness of outer space, with its countless stars and planets. Among the many things that roam the cosmic wilderness, asteroids have always stood out. These chunks of rock have not only fueled our imagination but also raised important questions about our safety here on Earth.
+<p>One big question is whether some asteroids could be a danger to us. To answer this, NASA has a project that tries to sort asteroids into two groups: those that could be hazardous and those that are not.
+
+<p>**Getting to Know Asteroids:**
+<p>Before we delve into this project, let's first grasp what asteroids are. Giuseppe was the first to discover an asteroid, Ceres, orbiting between Mars and Jupiter. Since then, various space organizations, including NASA, have diligently studied these celestial objects. 
+<p>Asteroids, often referred to as minor planets, primarily reside in the inner Solar System. Some of the larger ones have even earned the nickname "planetoids." It's important to note that the number of asteroids is immense, with millions of them scattered throughout space.
+<p>Think of asteroids as space rocks that journey around the Sun. They primarily occupy an area known as the asteroid belt, a celestial highway situated between Mars and Jupiter. These asteroids come in different sizes. While some are small and pose no threat, others are substantial and could potentially have a significant impact on Earth.
+<p>**Prior Research:**
+<P>Previous research and analysis have extensively explored the classification of asteroids and their potential hazards. Scientists and space agencies, including NASA, have been actively engaged in studying asteroids to understand their characteristics and predict their behavior. 
+<p>This research covered asteroid classification, orbital dynamics, impact risk assessment, deflection strategies, asteroid databases, space missions, and planetary defense strategies.
+<p> Overall, the existing body of research serves as a foundation for our current investigation, providing valuable insights and knowledge to build upon. We aim to contribute to this body of work by applying our data science learnings to enhance asteroid classification and hazard prediction.</P>
+<p>**Significance of the Research: **
+<p>Our choice of delving into the fascinating world of asteroids extends beyond mere scientific curiosity. It's a mission to ensure the safety of our planet. By undertaking the task of studying and classifying asteroids, we're not only satisfying our collective fascination with space but, more importantly, we're getting ready for the unknown things that space might bring us one day. It's not just a fun thing to do; it's about making sure our home is safe from unexpected space events.
+
+<p>Our team's motivation stems from a blend of personal interest and the broader need of planetary security. Recent news about an [Asteroid that passes nearby could hit Earth in the future, NASA says](https://abcnews.go.com/US/asteroid-passes-nearby-hit-earth-future-nasa/story?id=103322457#:~:text=Interest%20Successfully%20Added-,Asteroid%20that%20passes%20nearby%20could%20hit%20Earth%20in%20the%20future,could%20hit%20Earth%20by%202182.&text=What%20is%20an%20asteroid%3F,about%20329%20miles%20in%20diameter.), served as a sobering reminder of the significance of this topic. Each member of our team shares a personal curiosity to explore the depths of space, making the choice to investigate asteroids even more interesting.
+
+<p>As a data science enthusiast, we wanted to explore the EDA to predict the hazardous nature of these space rocks. This led us to explore resources like Kaggle, where we stumbled upon NASA's comprehensive dataset. This dataset, a treasure trove of information on various asteroids, distinguishes them as hazardous or non-hazardous, opening doors to a wealth of possibilities for our research. 
+<p> Now let us look at the dataset.
+</span>
+
+
+### 3. DATASET :
+<span style="font-size: 20px;">
+<p>Our dataset is available as [Nasa Asteroids Classification](https://www.kaggle.com/datasets/shrutimehta/nasa-asteroids-classification) at Kaggle. All the data is from the (http://neo.jpl.nasa.gov/). This API is maintained by Space Rocks Team: David Greenfield, Arezu Sarvestani, Jason English, and Peter Baunach. The dataset consists of 4687 data instances(rows) and 40 features(columns). Also, there are no null values in the dataset.
+<P>
+<p>Features’ description is given below;
+</span>
+
+
+<div class="column-definitions">
+  <p><strong>1. Neo Reference ID:</strong> ID for the Asteroid</p>
+  <p><strong>2. Name:</strong> Name of the Asteroid</p>
+  <p><strong>3. Absolute Magnitude:</strong> Indicates the brightness of the asteroid; lower magnitude means a brighter star, higher magnitude means a dimmer star.</p>
+  <p><strong>4. Est Dia in KM (min):</strong> Estimated minimum size of the asteroid in kilometers.</p>
+  <p><strong>5. Est Dia in KM (max):</strong> Estimated maximum size of the asteroid in kilometers.</p>
+  <p><strong>6. Close Approach Date:</strong> Date when the asteroid came very close to Earth's atmosphere.</p>
+  <p><strong>7. Epoch Date Close Approach:</strong> A related date concerning the asteroid's close approach.</p>
+  <p><strong>8. Relative Velocity (km per sec):</strong> The velocity of the asteroid.</p>
+  <p><strong>9. Miss Dist. (Astronomical):</strong> The asteroid's closest approach to Earth, measured in astronomical units.</p>
+  <p><strong>10. Miss Dist. (lunar):</strong> The distance in terms of the Moon's distance from Earth.</p>
+  <p><strong>11. Miss Dist. (kilometers):</strong> The closest approach of the asteroid to Earth in kilometers.</p>
+  <p><strong>12. Miss Dist. (miles):</strong> The closest approach in miles.</p>
+  <p><strong>13. Orbiting Body:</strong> Indicates the celestial body that the asteroid orbits.</p>
+  <p><strong>14. Orbit ID:</strong> An ID for the asteroid's orbit.</p>
+  <p><strong>15. Orbit Determination Date:</strong> The date when the asteroid's orbit was calculated.</p>
+  <p><strong>16. Orbit Uncertainty Minimum:</strong> A measure of the uncertainty in the asteroid's orbit.</p>
+  <p><strong>17. Orbit Intersection:</strong> Indicates where the asteroid's orbit crosses.</p>
+  <p><strong>18. Jupiter Tisserand Invariant:</strong> The JTI measures the influence of Jupiter's gravitational pull on celestial bodies; lower JTI values are farther from Jupiter.</p>
+  <p><strong>19. Epoch Osculation:</strong> A specific date related to the asteroid.</p>
+  <p><strong>20. Eccentricity:</strong> Determines the shape of the orbit; 0 < E < 1 indicates an ellipse, E = 1 is a parabola, and E > 1 is a hyperbola.</p>
+  <p><strong>21. Semi Major Axis:</strong> Indicates the size of the asteroid's orbit.</p>
+  <p><strong>22. Inclination:</strong> Denotes the tilt of the asteroid's orbit.</p>
+  <p><strong>23. Asc Node Longitude:</strong> Specifies where the asteroid's orbit crosses a reference plane.</p>
+  <p><strong>24. Orbital Period:</strong> Specifies how long it takes for the asteroid to complete one orbit.</p>
+  <p><strong>25. Perihelion Distance:</strong> Indicates how close the asteroid gets to the Sun during its orbit.</p>
+  <p><strong>26. Perihelion Arg:</strong> A measure related to the direction of the asteroid's orbit.</p>
+  <p><strong>27. Aphelion Dist:</strong> Specifies how far the asteroid is from the Sun during its orbit.</p>
+  <p><strong>28. Perihelion Time:</strong> The time when the asteroid is closest to the Sun.</p>
+  <p><strong>29. Mean Anomaly:</strong> A measure of where the asteroid is in its orbit.</p>
+  <p><strong>30. Mean Motion:</strong> Provides information about how the asteroid moves in its orbit.</p>
+  <p><strong>31. Equinox:</strong> Specifies the reference point for the orbital information.</p>
+  <p><strong>32. Hazardous:</strong> Target variable indicating whether the asteroid is considered hazardous to Earth; 1 for hazardous, 0 for not hazardous.</p>
+</div>
+
+<style>
+  .column-definitions {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f7f7f7;
+  }
+</style>
+
+<p>**Limitations of Dataset:**
+<p>There are several unnecessary features present in the dataset which hardly contribute towards classification. The features ‘Name’ and ‘Neo Reference ID’ denote the identification number given to an asteroid. These features are not useful for the machine learning model since the name of the asteroid does not contribute to the fact that it is hazardous.
+Consider the features:
+<P><i>‘Est Dia in KM(min)’, ‘Est Dia in KM(max)’,<br>
+‘Est Dia in M(min)’, ‘Est Dia in M(max)’,<br>
+‘Est Dia in Miles(min)’, ‘Est Dia in Miles(max)’,<br>
+‘Est Dia in Feet(min)’, ‘Est Dia in Feet(max)’</i><br>
+
+<p>All these features represent the estimated diameter of the asteroid in different units, KM = kilometre, M = meter, etc. This is an excellent example of redundant data since it is the same value represented differently. Such redundancy should be removed. Such as we have removed the redundant columns and used the columns with unit KM, Sec.
+
+<p>We have used below columns to perform EDA and statistical analysis.
+
+<p><i>'Neo.Reference.ID', 'Name', 'Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Relative.Velocity.km.per.sec', 'Orbit.Uncertainity', 'Minimum.Orbit.Intersection', 'Jupiter.Tisserand.Invariant', 'Epoch.Osculation', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Asc.Node.Longitude', 'Perihelion.Distance', 'Perihelion.Arg', 'Aphelion.Dist', 'Perihelion.Time', 'Mean.Anomaly', 'Mean.Motion', 'Hazardous'</i>
+<P>Before, proceeding let us look at the ‘hazardous’ feature. The values are ‘TRUE’ or ‘FALSE’, encoded these to 1 and 0, respectively.
+<P>**Let us now look at the variation in ‘hazardous’ feature.**
+
+
+
+
+
+
+
+
+<p>•	The count plot depicts that it is a case of an imbalanced dataset. We have a class which is dominating the other in terms of the number of data entries.
+83.89% of the data instances are labelled as 0 (not hazardous) and only
+16.10% are labelled as 1 (hazardous).
+<p>•	This means that even if we have a broken model that predicts all values as 0(not hazardous), then the accuracy will be 83.89%. So, we cannot merely rely on accuracy to evaluate a classification solely based  on this dataset.
+
+### 4. SMART QUESTION:
+<span style="font-size: 20px;">
+**1. How do the hazard classifications of asteroids relate to their proximity to Earth in terms of Perihelion and Aphelion distances?**
+<P>
+<P>**Explaination:** we have noticed a pattern or correlation between an asteroid's hazard classification and its proximity to Earth (measured in Perihelion and Aphelion distances). So we have formulated this question to investigate this relationship further.
+<P>
+**2. Does the impact of Perihelion Distance vary with the absolute magnitude.**
+<P>**Explination:** Observing variations in impact based on Perihelion Distance and Absolute Magnitude, we have identified this question to delve into the specifics of how these two factors are related.
+<P>
+**3. Can we measure the impact of eccentricity and perihelion distance on asteroid hazard classification using statistical tests?**
+<P>
+<P>**Explaination:** We have hypothesized that eccentricity and perihelion distance play a significant role in asteroid hazard classification. We have designed this question to test that hypothesis through statistical analysis.
+<P>
+**4. What are the most influential features in predicting whether an asteroid is hazardous ?**
+<P>
+<P>**Explaination: **The question about the most influential features in predicting asteroid hazard classification likely arises from an exploratory data analysis. We have used statistical to identify which attributes or features have the greatest impact on classification.
+<P>
+<P>After EDA (Exploratory Data Analysis) We have removed first question from the list and slightly changed the question 2.
+<P> So earlier we proposed question 2 as: 
+<P>Does the impact of parhelion distance vary with the diameter and the velocity of the asteroids? which chnaged to <P>Does the impact of parhelion distance vary with the diameter and the absolute magnitude? 
+</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
