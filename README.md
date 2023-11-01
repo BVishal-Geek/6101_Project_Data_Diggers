@@ -18,7 +18,7 @@ Team Members:
 3.	Sudhanshu Dhotel
 4.	Qibin Huang
 
-### Contact Detils:
+### Contact Detils:    
 1.	Vishal Bakshi: vishal.bakshi@gwu.edu
 2.	Pratiksha Dange: pratiksha.dange@gwu.edu 
 3.	Sudhanshu Dhotel: sudhanshu.dotel@gwu.edu
