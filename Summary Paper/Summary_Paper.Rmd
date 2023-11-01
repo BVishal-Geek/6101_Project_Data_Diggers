@@ -135,7 +135,7 @@ kable(summary(Ast_raw), "html") %>%
 ### Data Preprocessing
 
 ### Step : 1 : Converting the Hazard column from string to integer, and into categorical.
-
+Why converting the "Hazardous" colum?:
 ```{r, include=TRUE, echo=FALSE, results='asis'}
 Ast_raw <- Ast_raw %>%
 mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
