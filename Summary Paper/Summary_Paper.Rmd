@@ -137,6 +137,7 @@ kable(summary(Ast_raw), "html") %>%
 ### Step : 1 : Converting the Hazard column from string to integer, and into categorical.
 Why converting the "Hazardous" colum?:
 1.It ensures that the data type of the "Hazardous" column is consistent and suitable for analysis.
+2.It can makes the data easier to work with and is a more efficient representation.
 
 ```{r, include=TRUE, echo=FALSE, results='asis'}
 Ast_raw <- Ast_raw %>%
