@@ -178,6 +178,7 @@ ggplot(data = Ast_raw, aes(x = Hazardous, fill = Hazardous)) +
 ### Step : 2 : Dropping columns which are not required for our analysis:
 Why dropping columns:
 1.Redundant columns can lead to multicollinearity issues in some modeling algorithms.
+2.Redundant columns will cause high dimensionality, which can lead to overfitting in models and makes it harder to visualize.
 
 <p>There are several unnecessary features present in the dataset which hardly contribute towards classification. The features ‘Name’ and ‘Neo Reference ID’ denote the identification number given to an asteroid. These features are not useful for the machine learning model since the name of the asteroid does not contribute to the fact that it is hazardous.
 Consider the features:
