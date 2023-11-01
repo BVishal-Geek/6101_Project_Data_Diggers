@@ -1,7 +1,0 @@
-Smart Questions: 
-
-1. How do the hazard classifications of asteroids relate to their proximity to Earth in terms of perihelion and aphelion distances?
-3. Can we measure the impact of eccentricity and perihelion distance on asteroid hazard classification using statistical tests?
-2. Does the impact of perhelion distance vary with the diameter and the velocity of the asteroids ? - Anova Test
-4. Is there any significant difference in the orbit uncertainity, Mean Motion, and inclination with change in Perihelion Distance ? -- Chi Square Test - prove they are/ not independent to perihelion Distance
-5. What are the most influential features in predicting whether an asteroid is hazardous ? 
