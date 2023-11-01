@@ -138,7 +138,7 @@ kable(summary(Ast_raw), "html") %>%
 Why converting the "Hazardous" colum?:
 1.It ensures that the data type of the "Hazardous" column is consistent and suitable for analysis.
 2.It can makes the data easier to work with and is a more efficient representation.
-
+3.Only by converting it to integer or categorical it can compatible with a wide range of modeling algorithms. 
 ```{r, include=TRUE, echo=FALSE, results='asis'}
 Ast_raw <- Ast_raw %>%
 mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
