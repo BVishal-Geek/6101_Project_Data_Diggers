@@ -184,6 +184,7 @@ qqnorm(Ast_Subset$Aphelion.Dist, main = "Q-Q Plot of Aphelion Distance")
 qqline(Ast_Subset$Aphelion.Dist, distribution = qnorm)
 ```
 
+
 ## Data Visualization : 
 
 ## Histogram plots to check the distribution
@@ -292,6 +293,7 @@ ggplot(Ast_Subset_long_4, aes(x = Value, fill = Variable, color = "black")) +
   theme(legend.position = "right")
 ```
 
+### Part : 1.5 : Checking if the target variable is symmetrical/ Asymmetrical. 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
 # Create a pie chart for a binary categorical variable
@@ -301,7 +303,7 @@ counts <- table(Ast_Subset$Hazardous)
 labels <- c("Not Hazardous", "Hazardous")
 
 # Create the pie chart
-pie(counts, labels = labels, main = "Distribution of Asteroids by Hazardous Status")
+pie(counts, labels = labels, main = "Distribution of Asteroids by Hazardous & Non-Hazardous Status")
 
 ```
 When going to the distributions of the hazardous column. It is clearly visible that the Non-Hazardous Asteroids are more compared to Hazardous.
@@ -316,11 +318,10 @@ Considering the 3000 minimum rows rule, leveling/making data symmetrical is not 
 library(ggplot2)
 
 
-
 # Create a scatter plot with color based on a categorical variable
 ggplot(Ast_Subset, aes(x = Jupiter.Tisserand.Invariant, y = Eccentricity, color = Hazardous)) +
   geom_point() +
-  labs(title = "Scatter Plot with Hazardous", x = "JTI", y = "Eccentricity") +
+  labs(title = "Scatter Plot of JTI vs Eccentricity with respect to Hazardous", x = "JTI", y = "Eccentricity") +
   scale_color_discrete(name = "JTI vs Eccentricity") 
 
 ```
@@ -333,8 +334,8 @@ library(plotly)
 # Create a 3D scatter plot
 plot <- ggplot(Ast_Subset, aes(x = Eccentricity, y = Perihelion.Distance, z = Hazardous, color = Hazardous)) +
   geom_point() +
-  labs(title = "3D Scatter Plot with Hazardous", x = "Eccentricity", y = "Perihelion Distance", z = "Hazardous") +
-  scale_color_discrete(name = "JTI vs Eccentricity")
+  labs(title = "3D Scatter Plot of Perihelion Distance vs Eccentricity with respect to Hazardous", x = "Eccentricity", y = "Perihelion Distance", z = "Hazardous") +
+  scale_color_discrete(name = "Perihelion Distance vs Eccentricity")
 
 # Convert the ggplot plot to a 3D plotly plot
 plotly_plot <- ggplotly(plot)
@@ -343,60 +344,202 @@ plotly_plot <- ggplotly(plot)
 plotly_plot
 
 ```
+According to the domain knowledge/math E(Eccentricity) > 0 forms an elliptical shape. 
+As the data is Asymmetrical with 70% (Non-Hazardous) and 30% (Hazardous). We can see more scatter points of Non-Hazardous. 
+Whereas, considering the Hazardous Asteroids, Increase in Eccentricity is directly proportional to the change in perihelion distance. 
+Perihelion Distance (Closest point to the Sun): When the Perihelion Distance is less, it directly enters into the Hazardous category. 
 
 
 
+```{r}
+
+p1 <- ggplot(Ast_Subset, aes(x = as.factor(Hazardous), y = `Perihelion.Distance`)) +
+  geom_boxplot(fill= "skyblue") +
+  labs(title = "Perihelion Distance vs Hazardous", x = "Hazardous", y = "Perihelion Distance")
+
+p2 <- ggplot(Ast_Subset, aes(x = as.factor(Hazardous), y = `Aphelion.Dist`)) +
+  geom_boxplot(fill= "skyblue") +
+  labs(title = "Aphelion Distance vs Hazardous", x = "Hazardous", y = "Aphelion Distance")
+
+p1
+p2
 
 
+```
+To Statistically Prove it: 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### SMART Question : 1 : How do the hazard classifications of asteroids relate to their proximity to Earth in terms of Perihelion and Aphelion distances?
 
 ** Null Hypothesis **: There is no significant difference in perihelion distance for hazardous and non-hazardous asteroids.
 ** Alternate Hypothesis **: There is significant difference in perihelion distance for hazardous and non-hazardous asteroids. 
-```{r Q1}
 
-ggplot(Ast_Subset, aes(Hazardous , Perihelion.Distance, group = Hazardous , fill = Hazardous)) + geom_boxplot() + labs(title="Boxplot of Perihelion Distance ")
+```{r, include=TRUE, echo=TRUE, results='asis'}
+t_test_perihelion <- t.test(`Perihelion.Distance` ~ Hazardous, data = Ast_Subset)
+t_test_aphelion <- t.test(`Aphelion.Dist` ~ Hazardous, data = Ast_Subset)
 
-ggplot(Ast_Subset, aes(Hazardous , Aphelion.Dist, group = Hazardous, fill = Hazardous)) + geom_boxplot() +labs(title="Boxplot of Aphelion Distance ")
+```
 
-Per_Hazardous <- Ast_Subset$Perihelion.Distance[Ast_Subset$Hazardous == 1]
-Per_Non_Hazardous <- Ast_Subset$Perihelion.Distance[Ast_Subset$Hazardous == 0]
+```{r}
+# Show the results
+print(t_test_perihelion)
+```
 
-Aph_Hazardous <- Ast_Subset$Aphelion.Dist[Ast_Subset$Hazardous == 1]
-Aph_Non_Hazardous <- Ast_Subset$Aphelion.Dist[Ast_Subset$Hazardous == 0]
-
-
-
-test_per <- t.test(Per_Hazardous, Per_Non_Hazardous)
-test_aph <- t.test(Aph_Hazardous, Aph_Non_Hazardous)
-
-test_per
-test_aph
-
+```{r}
+# Show the results
+print(t_test_aphelion)
 ```
 Observation: 
 
-Perihelion Distance: There is an observable trend where hazardous asteroids tend to exhibit smaller perihelion distances when compared to their non-hazardous counterparts.
+Perihelion Distance: P-Value < Alpha Value. So, we reject null hypothesis. 
+There is an observable trend where hazardous asteroids tend to exhibit smaller perihelion distances when compared to their non-hazardous counterparts.
 
 Aphelion Distance: A subtle yet statistically significant variation emerges, with asteroids possessing higher aphelion distances demonstrating a slightly increased likelihood of being classified as hazardous. Nevertheless, it's important to note that the means of the two groups remain closely aligned. Thus, we cannot definitively attribute higher aphelion distance as the sole determinant of an asteroid's hazardous classification.
 
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+# Create a 3D scatter plot
+plot <- ggplot(Ast_Subset, aes(x = Eccentricity, y = Aphelion.Dist, z = Hazardous, color = Hazardous)) +
+  geom_point() +
+  labs(title = "3D Scatter Plot of Aphelion Distance vs Eccentricity with respect to Hazardous", x = "Eccentricity", y = "Aphelion Distance", z = "Hazardous") +
+  scale_color_discrete(name = "Aphelion Distance vs Eccentricity")
+
+# Convert the ggplot plot to a 3D plotly plot
+plotly_plot <- ggplotly(plot)
+
+# Show the interactive 3D plot
+plotly_plot
+
+
+```
+
+Eccentricity is directly proportional to the aphelion distance. Less the Eccentricity, more the circular orbit and less the Aphelion Distance. 
+According to the plot, majority of the plots are overlapped, so Aphelion distance alone is not effecting the asteroid to be Hazardous. 
+
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+library(ggplot2)
+library(tidyr)
+
+
+# List of variables for density plots
+variables <- c('Absolute.Magnitude', 
+               'Relative.Velocity.km.per.sec', 'Jupiter.Tisserand.Invariant', 
+               'Inclination', 'Mean.Motion')
+
+# Create density plots for each variable
+for (variable in variables) {
+  p <- ggplot(Ast_Subset, aes_string(x = variable, fill = 'Hazardous')) +
+    geom_density(alpha = 0.5) +
+    labs(title = paste('Density Plot of', variable),
+         x = variable,
+         y = 'Density') +
+    theme_minimal()
+  
+  print(p)
+}
+```
+
+**Absolute Magnitude Observation:** Hazardous asteroids tend to have a lower absolute magnitude. Explanation: Absolute magnitude is a measure of an asteroid’s brightness. A lower absolute magnitude indicates a brighter object. Since hazardous asteroids are often closer to Earth, they may appear brighter, resulting in a lower absolute magnitude.
+
+**Relative Velocity km per sec Observation:** Hazardous asteroids have a wider range of relative velocities. Explanation: This suggests that hazardous asteroids can be traveling at a variety of speeds relative to Earth. Higher speeds could increase the potential hazard of an asteroid.
+
+**Jupiter Tisserand Invariant Observation:** The distribution seems quite similar for both hazardous and non-hazardous asteroids. Explanation: The Jupiter Tisserand Invariant is used to differentiate between asteroids and Jupiter-family comets. The similar distribution suggests that this variable alone might not be a strong predictor of an asteroid’s hazardous classification.
+
+**Inclination Observation:** Hazardous asteroids have a wider range of inclinations. Explanation: Inclination is the tilt of an asteroid’s orbit plane. A wider range of inclinations for hazardous asteroids indicates that they can come from various directions relative to Earth’s orbital plane.
+
+**Perihelion Distance Observation:** Hazardous asteroids tend to have a smaller perihelion distance. Explanation: A smaller perihelion distance means the asteroid gets closer to the sun, and potentially closer to Earth’s orbit, increasing the likelihood of being classified as hazardous.
+
+**Aphelion Dist Observation:** Hazardous asteroids also tend to have a smaller aphelion distance. Explanation: A smaller aphelion distance means the asteroid’s orbit is closer to the sun throughout its entire orbit, again potentially bringing it closer to Earth.
+
+**Mean Motion Observation:** The distribution seems quite similar for both hazardous and non-hazardous asteroids. Explanation: Mean motion is the average motion of the asteroid. The similar distribution indicates that mean motion might not be a significant factor in determining whether an asteroid is hazardous.
+
+
+## SMART QUESTIONS 
+
+### Question : 2 : Does the impact of Perihelion Distance vary with the absolute magnitude.
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+ggplot(Ast_Subset, aes(x = `Perihelion.Distance`, y = `Absolute.Magnitude`, color = Hazardous)) +
+  geom_point(alpha = 0.6) +
+  labs(title = "Perihelion Distance vs. Absolute Magnitude", x = "Perihelion Distance", y = "Absolute Magnitude") +
+  theme_minimal()
+
+```
+Perihelion Distance vs. Absolute Magnitude Description: This plot illustrates how the brightness of an asteroid (in terms of absolute magnitude) relates to its perihelion distance, which is the closest point in its orbit to the Sun. Potential Insight: Hazardous asteroids might tend to have smaller perihelion distances, indicating they come closer to the Sun (and potentially Earth’s orbit). Brighter asteroids (with lower absolute magnitude) might be more easily detected, and their orbits more precisely determined, leading to a higher likelihood of being classified as hazardous if they come close to Earth.
+
+
+### Question : 3 : Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance? <br> - Reason: Here we are examining the relationship between orbit uncertainty, mean motion, and inclination and perihelion distance (also a numeric variable). <br>
+
+```{r , include=TRUE, echo=TRUE, results='show'}
+
+# Perform ANOVA for 'OrbitUncertainty' with 'PerihelionDistance'
+orbitU_perihelionDist_anova <- aov(`Orbit.Uncertainity` ~ `Perihelion.Distance`, data = Ast_raw)
+summary(orbitU_perihelionDist_anova)
+
+# Perform ANOVA for 'MeanMotion' with 'PerihelionDistance'
+meanM_perihelionDist_anova <- aov(`Mean.Motion` ~ `Perihelion.Distance`, data = Ast_raw)
+summary(meanM_perihelionDist_anova)
+
+# Perform ANOVA for 'Inclination' with 'PerihelionDistance'
+inclination_perihelionDist_anova <- aov(Inclination ~ `Perihelion.Distance`, data = Ast_raw)
+summary(inclination_perihelionDist_anova)
+
+```
+
+**Test 1 - Orbit Uncertainty vs. Perihelion Distance:**
+
+-   Df (Degrees of Freedom): There is 1 degree of freedom associated with Perihelion Distance, and 3690 degrees of freedom for residuals.
+-   Sum Sq (Sum of Squares): The sum of squares for Perihelion Distance is 381, and for residuals, it's 35756.
+-   Mean Sq (Mean Square): The mean square for Perihelion Distance is 381.
+-   F value: The F-statistic is 39.4.
+-   Pr(\>F): The p-value is approximately 3.9e-10, which is extremely small.
+
+**Interpretation:** In this test, the p-value (Pr(\>F)) is very small (3.9e-10), which indicates that there is a statistically significant difference in "Orbit Uncertainty" with a change in "Perihelion Distance." This suggests that "Perihelion Distance" has a significant impact on "Orbit Uncertainty."
+
+**Test 2 - Mean Motion vs. Perihelion Distance:**
+
+-   Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
+-   Sum Sq: The sum of squares for Perihelion Distance is 133, and for residuals, it's 276.
+-   Mean Sq: The mean square for Perihelion Distance is 133.
+-   F value: The F-statistic is 1777.
+-   Pr(\>F): The p-value is less than 2e-16, which is extremely small.
+
+**Interpretation:** In this test, the p-value is also very small (much less than 0.001), indicating a highly significant difference in "Mean Motion" with a change in "Perihelion Distance." Thus, "Perihelion Distance" significantly affects "Mean Motion."
+
+**Test 3 - Inclination vs. Perihelion Distance:**
+
+-   Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
+-   Sum Sq: The sum of squares for Perihelion Distance is 1681, and for residuals, it's 447526.
+-   Mean Sq: The mean square for Perihelion Distance is 1681.
+-   F value: The F-statistic is 13.9.
+-   Pr(\>F): The p-value is 2e-04, which is relatively small.
+
+**Interpretation:** In this test, the p-value (Pr(\>F)) is smaller than 0.05, indicating a significant difference in "Inclination" concerning changes in "Perihelion Distance." It implies that "Perihelion Distance" has a statistically significant effect on "Inclination," though the significance is not as strong as in the previous tests.
+
+In summary, based on these ANOVA tests, it appears that "Perihelion Distance" has a significant impact on "Orbit Uncertainty," "Mean Motion," and "Inclination," with "Mean Motion" having the most substantial effect, followed by "Orbit Uncertainty" and then "Inclination." The p-values for all three tests suggest that the relationships are statistically significant.
+
+
+
+
+### Question : 4 : What are the most influential features in predicting whether an asteroid is hazardous ? 
+```{r, include=TRUE, echo=TRUE, results='asis', fig.width=10, fig.height=10}
+
+library(corrplot)
+
+# List of specified variables for the correlation plot
+specified_variables <- c('Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 
+                         'Relative.Velocity.km.per.sec', 'Minimum.Orbit.Intersection', 
+                         'Jupiter.Tisserand.Invariant', 'Eccentricity', 
+                         'Semi.Major.Axis', 'Inclination', 'Perihelion.Distance', 
+                          'Aphelion.Dist', 'Mean.Motion')
+
+# Calculate the correlation matrix for the specified variables
+correlation_matrix_specified <- cor(Ast_raw[, specified_variables], use = "complete.obs")
+
+# Create a correlation plot
+corrplot(correlation_matrix_specified, method = "color", tl.cex = 0.7, number.cex = 0.7, addCoef.col = "black")
+```
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 
@@ -453,58 +596,6 @@ Jupiter Tisserand Invariant, Epoch Osculation, Eccentricity, Semi Major Axis, In
 
 
 
-
-## Smart Question:PratiKsha Dange
-
-**Is there any significant difference in the orbit uncertainty, Mean Motion, and inclination with a change in Perihelion Distance?** <br> - Test: ANOVA Test .<br> - Reason: Here we are examining the relationship between orbit uncertainty, mean motion, and inclination (which are likely numeric or continuous variables) and perihelion distance (also a numeric variable). <br>
-
-```{r , include=TRUE, echo=TRUE, results='show'}
-
-# Perform ANOVA for 'OrbitUncertainty' with 'PerihelionDistance'
-orbitU_perihelionDist_anova <- aov(`Orbit.Uncertainity` ~ `Perihelion.Distance`, data = Ast_raw)
-summary(orbitU_perihelionDist_anova)
-
-# Perform ANOVA for 'MeanMotion' with 'PerihelionDistance'
-meanM_perihelionDist_anova <- aov(`Mean.Motion` ~ `Perihelion.Distance`, data = Ast_raw)
-summary(meanM_perihelionDist_anova)
-
-# Perform ANOVA for 'Inclination' with 'PerihelionDistance'
-inclination_perihelionDist_anova <- aov(Inclination ~ `Perihelion.Distance`, data = Ast_raw)
-summary(inclination_perihelionDist_anova)
-
-```
-
-**Test 1 - Orbit Uncertainty vs. Perihelion Distance:**
-
--   Df (Degrees of Freedom): There is 1 degree of freedom associated with Perihelion Distance, and 3690 degrees of freedom for residuals.
--   Sum Sq (Sum of Squares): The sum of squares for Perihelion Distance is 381, and for residuals, it's 35756.
--   Mean Sq (Mean Square): The mean square for Perihelion Distance is 381.
--   F value: The F-statistic is 39.4.
--   Pr(\>F): The p-value is approximately 3.9e-10, which is extremely small.
-
-**Interpretation:** In this test, the p-value (Pr(\>F)) is very small (3.9e-10), which indicates that there is a statistically significant difference in "Orbit Uncertainty" with a change in "Perihelion Distance." This suggests that "Perihelion Distance" has a significant impact on "Orbit Uncertainty."
-
-**Test 2 - Mean Motion vs. Perihelion Distance:**
-
--   Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
--   Sum Sq: The sum of squares for Perihelion Distance is 133, and for residuals, it's 276.
--   Mean Sq: The mean square for Perihelion Distance is 133.
--   F value: The F-statistic is 1777.
--   Pr(\>F): The p-value is less than 2e-16, which is extremely small.
-
-**Interpretation:** In this test, the p-value is also very small (much less than 0.001), indicating a highly significant difference in "Mean Motion" with a change in "Perihelion Distance." Thus, "Perihelion Distance" significantly affects "Mean Motion."
-
-**Test 3 - Inclination vs. Perihelion Distance:**
-
--   Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
--   Sum Sq: The sum of squares for Perihelion Distance is 1681, and for residuals, it's 447526.
--   Mean Sq: The mean square for Perihelion Distance is 1681.
--   F value: The F-statistic is 13.9.
--   Pr(\>F): The p-value is 2e-04, which is relatively small.
-
-**Interpretation:** In this test, the p-value (Pr(\>F)) is smaller than 0.05, indicating a significant difference in "Inclination" concerning changes in "Perihelion Distance." It implies that "Perihelion Distance" has a statistically significant effect on "Inclination," though the significance is not as strong as in the previous tests.
-
-In summary, based on these ANOVA tests, it appears that "Perihelion Distance" has a significant impact on "Orbit Uncertainty," "Mean Motion," and "Inclination," with "Mean Motion" having the most substantial effect, followed by "Orbit Uncertainty" and then "Inclination." The p-values for all three tests suggest that the relationships are statistically significant.
 
 
 
