@@ -8,7 +8,6 @@ output:
     toc: yes
 ---
 
-## Importing Libraries
 
 ```{r init, include=FALSE}
 # some of common options (and the defaults) are: 
@@ -37,33 +36,17 @@ h2 {color:blue}
   <p><strong>3. Absolute Magnitude:</strong> Indicates the brightness of the asteroid; lower magnitude means a brighter star, higher magnitude means a dimmer star.</p>
   <p><strong>4. Est Dia in KM (min):</strong> Estimated minimum size of the asteroid in kilometers.</p>
   <p><strong>5. Est Dia in KM (max):</strong> Estimated maximum size of the asteroid in kilometers.</p>
-  <p><strong>6. Close Approach Date:</strong> Date when the asteroid came very close to Earth's atmosphere.</p>
-  <p><strong>7. Epoch Date Close Approach:</strong> A related date concerning the asteroid's close approach.</p>
-  <p><strong>8. Relative Velocity (km per sec):</strong> The velocity of the asteroid.</p>
-  <p><strong>9. Miss Dist. (Astronomical):</strong> The asteroid's closest approach to Earth, measured in astronomical units.</p>
-  <p><strong>10. Miss Dist. (lunar):</strong> The distance in terms of the Moon's distance from Earth.</p>
-  <p><strong>11. Miss Dist. (kilometers):</strong> The closest approach of the asteroid to Earth in kilometers.</p>
-  <p><strong>12. Miss Dist. (miles):</strong> The closest approach in miles.</p>
-  <p><strong>13. Orbiting Body:</strong> Indicates the celestial body that the asteroid orbits.</p>
-  <p><strong>14. Orbit ID:</strong> An ID for the asteroid's orbit.</p>
-  <p><strong>15. Orbit Determination Date:</strong> The date when the asteroid's orbit was calculated.</p>
-  <p><strong>16. Orbit Uncertainty Minimum:</strong> A measure of the uncertainty in the asteroid's orbit.</p>
-  <p><strong>17. Orbit Intersection:</strong> Indicates where the asteroid's orbit crosses.</p>
-  <p><strong>18. Jupiter Tisserand Invariant:</strong> The JTI measures the influence of Jupiter's gravitational pull on celestial bodies; lower JTI values are farther from Jupiter.</p>
-  <p><strong>19. Epoch Osculation:</strong> A specific date related to the asteroid.</p>
-  <p><strong>20. Eccentricity:</strong> Determines the shape of the orbit; 0 < E < 1 indicates an ellipse, E = 1 is a parabola, and E > 1 is a hyperbola.</p>
-  <p><strong>21. Semi Major Axis:</strong> Indicates the size of the asteroid's orbit.</p>
-  <p><strong>22. Inclination:</strong> Denotes the tilt of the asteroid's orbit.</p>
-  <p><strong>23. Asc Node Longitude:</strong> Specifies where the asteroid's orbit crosses a reference plane.</p>
-  <p><strong>24. Orbital Period:</strong> Specifies how long it takes for the asteroid to complete one orbit.</p>
-  <p><strong>25. Perihelion Distance:</strong> Indicates how close the asteroid gets to the Sun during its orbit.</p>
-  <p><strong>26. Perihelion Arg:</strong> A measure related to the direction of the asteroid's orbit.</p>
-  <p><strong>27. Aphelion Dist:</strong> Specifies how far the asteroid is from the Sun during its orbit.</p>
-  <p><strong>28. Perihelion Time:</strong> The time when the asteroid is closest to the Sun.</p>
-  <p><strong>29. Mean Anomaly:</strong> A measure of where the asteroid is in its orbit.</p>
-  <p><strong>30. Mean Motion:</strong> Provides information about how the asteroid moves in its orbit.</p>
-  <p><strong>31. Equinox:</strong> Specifies the reference point for the orbital information.</p>
-  <p><strong>32. Hazardous:</strong> Target variable indicating whether the asteroid is considered hazardous to Earth; 1 for hazardous, 0 for not hazardous.</p>
+  <p><strong>6. Relative Velocity (km per sec):</strong> The velocity of the asteroid.</p>
+  <p><strong>7. Orbit Uncertainty Minimum:</strong> A measure of the uncertainty in the asteroid's orbit.</p>
+  <p><strong>8. Jupiter Tisserand Invariant:</strong> The JTI measures the influence of Jupiter's gravitational pull on celestial bodies; lower JTI values are farther from Jupiter.</p>
+  <p><strong>9. Eccentricity:</strong> Determines the shape of the orbit; 0 < E < 1 indicates an ellipse, E = 1 is a parabola, and E > 1 is a hyperbola.</p>
+  <p><strong>10. Semi Major Axis:</strong> Indicates the size of the asteroid's orbit.</p>
+  <p><strong>11. Inclination:</strong> Denotes the tilt of the asteroid's orbit.</p>
+  <p><strong>12. Perihelion Distance:</strong> Indicates how close the asteroid gets to the Sun during its orbit.</p>
+  <p><strong>13. Aphelion Dist:</strong> Specifies how far the asteroid is from the Sun during its orbit.</p>
+  <p><strong>14. Perihelion Time:</strong> The time when the asteroid is closest to the Sun.</p>
+  <p><strong>15. Mean Motion:</strong> Provides information about how the asteroid moves in its orbit.</p>
+  <p><strong>16. Hazardous:</strong> Target variable indicating whether the asteroid is considered hazardous to Earth; 1 for hazardous, 0 for not hazardous.</p>
 </div>
 
 <style>
@@ -79,11 +62,15 @@ h2 {color:blue}
 
 ## Importing Dataset
 
-```{r, include=TRUE, echo=FALSE, results='show'}
+```{r, include=TRUE, echo=TRUE, results='show'}
 current_directory <- getwd()
 data_path <- "Datasets/Asteroid_Hazard_Classification.csv"
 file_path <- file.path(dirname(current_directory), data_path)
 Ast_raw <- data.frame(read.csv(file_path))
+
+kable(summary(Ast_raw), "html") %>%
+  kable_styling(full_width = FALSE) %>% 
+  scroll_box(width = "100%", height = "400px")
 ```
 
 
@@ -173,12 +160,30 @@ shapiro.test(data_cleaned_max$Est.Dia.in.KM.max.)
 #the p-values for both the minimum and maximum asteroid diameters are less than 2e-16, indicating that the data significantly deviates from a normal distribution.
 
 ```
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+# Load the ggplot2 package
+library(ggplot2)
+
+kable(summary(Ast_Subset), "html") %>%
+  kable_styling(full_width = FALSE) %>% 
+  scroll_box(width = "100%", height = "400px")
+
+# Create a Q-Q plot
+qqnorm(Ast_Subset$Perihelion.Distance, main = "Q-Q Plot")
+
+# Add a Q-Q line (e.g., line for the normal distribution)
+qqline(Ast_Subset$Perihelion.Distance, distribution = qnorm)
+
+```
 
 ## Data Visualization : 
 
 ## Histogram plots to check the distribution
 
-### Part 1: 
+### Part 1: Checking Histograms for Distributions
+#### Part 2.1 : Absolute Magnitude, Estimated Diameter (Min), Estimated Diameter (Max) 
+
 ```{r}
 library(ggplot2)
 # Load the tidyr package
@@ -205,7 +210,7 @@ ggplot(Ast_Subset_long_1, aes(x = Value, fill = Variable, color = "black")) +
 
 ```
 
-### Part 2 : 
+### Part 2 : Histograms for Velocity, Orbit Uncertainity, Jupiter Tisserand Invariant
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
@@ -230,6 +235,7 @@ ggplot(Ast_Subset_long_2, aes(x = Value, fill = Variable, color = "black")) +
 
 
 ```
+
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
 # Create a histogram for 'Eccentricity', 'Semi.Major.Axis', and 'Inclination'
@@ -272,10 +278,7 @@ ggplot(Ast_Subset_long_4, aes(x = Value, fill = Variable, color = "black")) +
   scale_color_manual(values = "black") +
   theme_minimal() +
   theme(legend.position = "right")
-
-
 ```
-
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
