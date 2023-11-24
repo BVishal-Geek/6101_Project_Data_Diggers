@@ -2,10 +2,13 @@
 title: "Evaluating Asteroid Characteristics and Predicting Hazard Levels Using NASA's Asteroid Classification Dataset"
 author: "Vishal Bakshi, Pratiksha Dange, Sudanshu Dotel, Qibin Huang"
 date: "`r Sys.Date()`"
-output: 
-  prettydoc::html_pretty:
-    theme: cayman
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
     toc: yes
+    toc_depth: 3
+    toc_float: yes
 ---
 
 
@@ -19,6 +22,7 @@ options(scientific=T, digits = 3)
 library(dplyr)
 library(kableExtra)
 library(ggplot2)
+library()
 
 # options(scipen=9, digits = 3)  
 # ‘scipen’: integer. A penalty to be applied when deciding to print numeric values in fixed or exponential notation.  Positive values bias towards fixed and negative towards scientific notation: fixed notation will be preferred unless it is more than ‘scipen’ digits wider.
@@ -61,7 +65,7 @@ h2 {color:blue}
 
 
 
-## Importing Dataset
+## Importing Dataset & Checking Summary Statistics
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 current_directory <- getwd()
@@ -80,10 +84,13 @@ kable(summary(Ast_raw), "html") %>%
 
 ### Step : 1 : Converting the Hazard column from string to integer, and into categorical.
 
-```{r, include=TRUE, echo=TRUE, results='asis'}
+```{r, include=TRUE, echo=TRUE, results='show'}
 Ast_raw <- Ast_raw %>%
 mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
 Ast_raw$Hazardous <- as.factor(Ast_raw$Hazardous)
+kable(Ast_raw, "html") %>%
+  kable_paper(full_width = FALSE) %>% 
+  scroll_box(width = "100%", height = "400px")
 ```
 
 
@@ -104,6 +111,8 @@ kable(Ast_Subset, "html") %>%
   scroll_box(width = "100%", height = "400px")
 
 ```
+
+The reason to drop the columns is to easily carry out the inferences and also according to the domain knowledge we acquired, the columns which we dropped are not very useful for our analysis. 
 
 ### Step : 3 : Outlier Check: 
 
@@ -156,9 +165,12 @@ qqline(data_cleaned_max$Est.Dia.in.KM.max.)
 shapiro.test(data_cleaned_min$Est.Dia.in.KM.min.)
 shapiro.test(data_cleaned_max$Est.Dia.in.KM.max.)
 
-#the p-values for both the minimum and maximum asteroid diameters are less than 2e-16, indicating that the data significantly deviates from a normal distribution.
+
 
 ```
+We performed outlier check on diameter of the asteroid, in which we got to know that p-values for both the minimum and maximum asteroid diameters are less than 2e-16, indicating that the data significantly deviates from a normal distribution.
+However, removing outliers was not common in our case. As the data was asymmetrical with 30% hazardous and 70% non-hazardous. It is very likely that our data wouldn't pass 3000 minimum rows rule and also it might be the case where majority of hazardous rows will be eliminated too.  
+
 ### Step : 4 : Checking for Normal Distribution using QQ-Plot
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
@@ -184,8 +196,9 @@ qqnorm(Ast_Subset$Aphelion.Dist, main = "Q-Q Plot of Aphelion Distance")
 qqline(Ast_Subset$Aphelion.Dist, distribution = qnorm)
 ```
 
+According to the QQ-Plot and QQ-Line, its clear that we have some skewness and outliers. Reason to not drop outliers is, it is very likely that our data wouldn't pass 3000 minimum rows rule and also it might be the case where majority of hazardous rows will be eliminated too. 
 
-## Data Visualization : 
+## Data Visualization  
 
 ## Histogram plots to check the distribution
 
@@ -293,6 +306,8 @@ ggplot(Ast_Subset_long_4, aes(x = Value, fill = Variable, color = "black")) +
   theme(legend.position = "right")
 ```
 
+Above provided histograms are the most important variables for this analysis. We can visually state that Absolute Magintude, Jupiter Invariant, Eccentricity are normally distributed and every other graph is either left or right skewed. Orbit Uncertainity is bi-model. 
+
 ### Part : 1.5 : Checking if the target variable is symmetrical/ Asymmetrical. 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
@@ -306,13 +321,16 @@ labels <- c("Not Hazardous", "Hazardous")
 pie(counts, labels = labels, main = "Distribution of Asteroids by Hazardous & Non-Hazardous Status")
 
 ```
+
 When going to the distributions of the hazardous column. It is clearly visible that the Non-Hazardous Asteroids are more compared to Hazardous.
 The data is Asymmetrical. 
 Considering the 3000 minimum rows rule, leveling/making data symmetrical is not a viable option right now. 
 
 
 ## Understanding Patterns With Respect To Domain Knowledge
+
 ### Part: 1: JTI vs Eccentricity
+
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 # Load the ggplot2 package
 library(ggplot2)
@@ -325,6 +343,11 @@ ggplot(Ast_Subset, aes(x = Jupiter.Tisserand.Invariant, y = Eccentricity, color 
   scale_color_discrete(name = "JTI vs Eccentricity") 
 
 ```
+
+Domain Knowledge: JTI a.k.a Jupiter Tisserand Invariant is the value which represents the gravitational pull of a celestial body. It might be one of the reasons of the change in the eccentricity of an asteroid. 
+We can clearly see that the increase in the level of the Jupiter Tisserand Invariant in the plot is making Eccentricity decrease. Greater gravitional pull from the jupiter can lead to change in asteroid eccentricity from ellipse to circle. 
+
+
 ### Part 2 : Perihelion vs Eccentricity With Respect To Hazardous
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
@@ -349,24 +372,23 @@ As the data is Asymmetrical with 70% (Non-Hazardous) and 30% (Hazardous). We can
 Whereas, considering the Hazardous Asteroids, Increase in Eccentricity is directly proportional to the change in perihelion distance. 
 Perihelion Distance (Closest point to the Sun): When the Perihelion Distance is less, it directly enters into the Hazardous category. 
 
-
+To prove the above given statement: 
 
 ```{r}
 
-p1 <- ggplot(Ast_Subset, aes(x = as.factor(Hazardous), y = `Perihelion.Distance`)) +
+ggplot(Ast_Subset, aes(x = as.factor(Hazardous), y = `Perihelion.Distance`)) +
   geom_boxplot(fill= "skyblue") +
   labs(title = "Perihelion Distance vs Hazardous", x = "Hazardous", y = "Perihelion Distance")
 
-p2 <- ggplot(Ast_Subset, aes(x = as.factor(Hazardous), y = `Aphelion.Dist`)) +
+ggplot(Ast_Subset, aes(x = as.factor(Hazardous), y = `Aphelion.Dist`)) +
   geom_boxplot(fill= "skyblue") +
   labs(title = "Aphelion Distance vs Hazardous", x = "Hazardous", y = "Aphelion Distance")
 
-p1
-p2
-
-
 ```
-To Statistically Prove it: 
+
+By observing the box plots, it is clear that higher perihelion distance has less effect of being hazard to earth, where as the less perihelion distance are more hazardous in nature. 
+
+To Statistically Prove it using Smart Question 1: 
 
 ### SMART Question : 1 : How do the hazard classifications of asteroids relate to their proximity to Earth in terms of Perihelion and Aphelion distances?
 
@@ -379,12 +401,13 @@ t_test_aphelion <- t.test(`Aphelion.Dist` ~ Hazardous, data = Ast_Subset)
 
 ```
 
-```{r}
+```{r, include=TRUE, echo=TRUE, results='asis'}
 # Show the results
+
 print(t_test_perihelion)
 ```
 
-```{r}
+```{r, include=TRUE, echo=TRUE, results='asis'}
 # Show the results
 print(t_test_aphelion)
 ```
@@ -395,6 +418,8 @@ There is an observable trend where hazardous asteroids tend to exhibit smaller p
 
 Aphelion Distance: A subtle yet statistically significant variation emerges, with asteroids possessing higher aphelion distances demonstrating a slightly increased likelihood of being classified as hazardous. Nevertheless, it's important to note that the means of the two groups remain closely aligned. Thus, we cannot definitively attribute higher aphelion distance as the sole determinant of an asteroid's hazardous classification.
 
+
+### Part : 3 : Aphelion Distance vs Eccentricity With Respect To Hazardous
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 # Create a 3D scatter plot
@@ -408,7 +433,6 @@ plotly_plot <- ggplotly(plot)
 
 # Show the interactive 3D plot
 plotly_plot
-
 
 ```
 
@@ -434,7 +458,7 @@ for (variable in variables) {
          x = variable,
          y = 'Density') +
     theme_minimal()
-  
+   
   print(p)
 }
 ```
@@ -447,16 +471,12 @@ for (variable in variables) {
 
 **Inclination Observation:** Hazardous asteroids have a wider range of inclinations. Explanation: Inclination is the tilt of an asteroid’s orbit plane. A wider range of inclinations for hazardous asteroids indicates that they can come from various directions relative to Earth’s orbital plane.
 
-**Perihelion Distance Observation:** Hazardous asteroids tend to have a smaller perihelion distance. Explanation: A smaller perihelion distance means the asteroid gets closer to the sun, and potentially closer to Earth’s orbit, increasing the likelihood of being classified as hazardous.
-
-**Aphelion Dist Observation:** Hazardous asteroids also tend to have a smaller aphelion distance. Explanation: A smaller aphelion distance means the asteroid’s orbit is closer to the sun throughout its entire orbit, again potentially bringing it closer to Earth.
-
 **Mean Motion Observation:** The distribution seems quite similar for both hazardous and non-hazardous asteroids. Explanation: Mean motion is the average motion of the asteroid. The similar distribution indicates that mean motion might not be a significant factor in determining whether an asteroid is hazardous.
 
 
 ## SMART QUESTIONS 
 
-### Question : 2 : Does the impact of Perihelion Distance vary with the absolute magnitude.
+### Question : 2 : Does the impact of Perihelion Distance varying with the absolute magnitude.
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
@@ -466,6 +486,7 @@ ggplot(Ast_Subset, aes(x = `Perihelion.Distance`, y = `Absolute.Magnitude`, colo
   theme_minimal()
 
 ```
+
 Perihelion Distance vs. Absolute Magnitude Description: This plot illustrates how the brightness of an asteroid (in terms of absolute magnitude) relates to its perihelion distance, which is the closest point in its orbit to the Sun. Potential Insight: Hazardous asteroids might tend to have smaller perihelion distances, indicating they come closer to the Sun (and potentially Earth’s orbit). Brighter asteroids (with lower absolute magnitude) might be more easily detected, and their orbits more precisely determined, leading to a higher likelihood of being classified as hazardous if they come close to Earth.
 
 
@@ -474,16 +495,26 @@ Perihelion Distance vs. Absolute Magnitude Description: This plot illustrates ho
 ```{r , include=TRUE, echo=TRUE, results='show'}
 
 # Perform ANOVA for 'OrbitUncertainty' with 'PerihelionDistance'
+
+Ast_Subset$Orbit.Uncertainity <- as.factor(Ast_Subset$Orbit.Uncertainity)
 orbitU_perihelionDist_anova <- aov(`Orbit.Uncertainity` ~ `Perihelion.Distance`, data = Ast_raw)
 summary(orbitU_perihelionDist_anova)
 
-# Perform ANOVA for 'MeanMotion' with 'PerihelionDistance'
-meanM_perihelionDist_anova <- aov(`Mean.Motion` ~ `Perihelion.Distance`, data = Ast_raw)
-summary(meanM_perihelionDist_anova)
+```
 
-# Perform ANOVA for 'Inclination' with 'PerihelionDistance'
-inclination_perihelionDist_anova <- aov(Inclination ~ `Perihelion.Distance`, data = Ast_raw)
-summary(inclination_perihelionDist_anova)
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+# Perform Two Sampled T-Test for 'MeanMotion' with 'PerihelionDistance'
+meanM_perihelionDist_Ttest <- t.test(Ast_Subset$Mean.Motion, Ast_Subset$Perihelion.Distance)
+meanM_perihelionDist_Ttest
+
+```
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+# Perform Two Sampled T-Test for 'Inclination' with 'PerihelionDistance'
+inclination_perihelionDist_anova <- t.test(Ast_Subset$Inclination, Ast_Subset$Perihelion.Distance)
+inclination_perihelionDist_anova
 
 ```
 
@@ -498,31 +529,40 @@ summary(inclination_perihelionDist_anova)
 **Interpretation:** In this test, the p-value (Pr(\>F)) is very small (3.9e-10), which indicates that there is a statistically significant difference in "Orbit Uncertainty" with a change in "Perihelion Distance." This suggests that "Perihelion Distance" has a significant impact on "Orbit Uncertainty."
 
 **Test 2 - Mean Motion vs. Perihelion Distance:**
-
--   Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
--   Sum Sq: The sum of squares for Perihelion Distance is 133, and for residuals, it's 276.
--   Mean Sq: The mean square for Perihelion Distance is 133.
--   F value: The F-statistic is 1777.
--   Pr(\>F): The p-value is less than 2e-16, which is extremely small.
-
-**Interpretation:** In this test, the p-value is also very small (much less than 0.001), indicating a highly significant difference in "Mean Motion" with a change in "Perihelion Distance." Thus, "Perihelion Distance" significantly affects "Mean Motion."
+The very low p-value (<2e-16) strongly rejects the null hypothesis, indicating a significant difference between "Mean.Motion" and "Perihelion.Distance." The negative t-statistic (-22) suggests "Mean.Motion" is notably lower than "Perihelion.Distance." Additionally, the 95% confidence interval excludes 0, further supporting this conclusion. In practical terms, this signifies a statistically significant difference, and you should explore its implications for your research or context.
 
 **Test 3 - Inclination vs. Perihelion Distance:**
-
--   Df: 1 degree of freedom for Perihelion Distance and 3690 degrees of freedom for residuals.
--   Sum Sq: The sum of squares for Perihelion Distance is 1681, and for residuals, it's 447526.
--   Mean Sq: The mean square for Perihelion Distance is 1681.
--   F value: The F-statistic is 13.9.
--   Pr(\>F): The p-value is 2e-04, which is relatively small.
-
-**Interpretation:** In this test, the p-value (Pr(\>F)) is smaller than 0.05, indicating a significant difference in "Inclination" concerning changes in "Perihelion Distance." It implies that "Perihelion Distance" has a statistically significant effect on "Inclination," though the significance is not as strong as in the previous tests.
+The very low p-value (<2e-16) strongly rejects the null hypothesis, indicating a significant difference between "Inclination" and "Perihelion.Distance." With a positive t-statistic (69), "Inclination" significantly exceeds "Perihelion.Distance." The 95% confidence interval supports this finding, as it excludes 0.
 
 In summary, based on these ANOVA tests, it appears that "Perihelion Distance" has a significant impact on "Orbit Uncertainty," "Mean Motion," and "Inclination," with "Mean Motion" having the most substantial effect, followed by "Orbit Uncertainty" and then "Inclination." The p-values for all three tests suggest that the relationships are statistically significant.
 
+### Question : 4 : Can we measure the impact of eccentricity on asteroid hazard classification using statistical tests?
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+ggplot(Ast_Subset, aes(x = as.factor(Hazardous), y = Eccentricity)) +
+  geom_boxplot(fill= "skyblue") +
+  labs(title = "Eccentricity vs Hazardous", x = "Hazardous", y = "Eccentricity")
+
+```
+
+The box plots provide a visual representation of the distribution of Eccentricity for both hazardous and non-hazardous asteroids.
+
+Observations: Eccentricity: The distribution of eccentricity appears to be quite similar for both hazardous and non-hazardous asteroids. However, there are some outliers in each category.
+
+To confirm these observations and determine if the differences are statistically significant, we will perform ANOVA tests on both Eccentricity and Perihelion Distance for hazardous and non-hazardous asteroids.
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+anova_eccentricity <- aov(Eccentricity ~ Hazardous, data = Ast_Subset)
+summary(anova_eccentricity)
+
+```
+Interpretation: Eccentricity: Since the PValue (5.88* 10^-30) is significantly less than our alpha level of 0.05, we reject the null hypothesis. This indicates that there is a significant impact of eccentricity on asteroid hazard classification.
 
 
 
-### Question : 4 : What are the most influential features in predicting whether an asteroid is hazardous ? 
+### Question : 5 : What are the most influential features in predicting whether an asteroid is hazardous ? 
 ```{r, include=TRUE, echo=TRUE, results='asis', fig.width=10, fig.height=10}
 
 library(corrplot)
@@ -540,6 +580,22 @@ correlation_matrix_specified <- cor(Ast_raw[, specified_variables], use = "compl
 # Create a correlation plot
 corrplot(correlation_matrix_specified, method = "color", tl.cex = 0.7, number.cex = 0.7, addCoef.col = "black")
 ```
+
+Now to identify the most influential features the impacted the target column, we had two main choices. One, finding out which predictor variables have a high correlation with the target variable and next training a classification model and assess the feature importance scores generated by the model to identify the most influential features for predicting the asteroid hazard.
+
+We had to discard the first, correlation approach, because the target variable "Hazardous" is a binary categorical variable, and the correlation between binary variables and continuous variables isn't that meaningful.
+
+So, we went ahead with the latter approach. we decided to train a random forest model and get the feature importance scores generated by the model to find out the most influential features. 
+
+We decided to use a Random Forest model to determine feature importance in our case for the following reasons:
+
+1. **Non-linearity Handling:** Random Forest is effective at capturing complex, non-linear relationships in the data. In the context of asteroid hazard prediction, the relationship between various features and the target variable ("Hazardous") is non-linear.
+
+2. **Feature Importance:** Random Forest provides a straightforward way to calculate feature importance. It measures the contribution of each predictor variable in reducing impurity or increasing the Gini index.
+
+3. **Outlier Robustness:** Random Forest is robust to outliers and noisy data, which can be important when working with astronomical datasets like this one.
+
+4. **Variable Types:** Random Forest can handle a mix of categorical and numeric predictor variables.
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 
@@ -580,21 +636,14 @@ ggplot(importance_df, aes(x = reorder(rownames(importance_df), -MeanDecreaseGini
 
 \*\* From the above outputs we can infer the following:\*\*
 
-Absolute Magnitude: This feature holds the highest importance score of 104.07, signifying its significant influence on the model's capability to differentiate between hazardous and non-hazardous asteroids. In other words, the brightness of the asteroid, represented by its absolute magnitude, plays a crucial role in hazard classification.
+Based on the feature importance values from the Random Forest model:
 
-Est Dia in KM min and Est Dia in KM max: These two features also possess substantial importance scores, 99.01 and 110.43 respectively. This indicates that the estimated diameter of the asteroid in kilometers is of paramount importance when assessing whether an asteroid is hazardous or not.
-
-Relative Velocity km per sec: While still important, this feature has a comparatively lower importance score of 16.29. It suggests that the asteroid's velocity, although not as critical as size and magnitude, does contribute to the model's ability to make predictions regarding hazard levels.
-
-Orbiting Body: This feature's importance score is 0.00, implying that it does not impact the model's hazard classification. It may be a candidate for removal from the feature set since it has no discernible effect on the predictions.
-
-Orbit Uncertainty: With a moderate importance score of 40.64, this feature contributes to determining hazard levels. It suggests that the degree of uncertainty in an asteroid's orbit is a relevant factor in classification.
-
-Minimum Orbit Intersection: This feature carries the highest importance score of 469.03, indicating its central role in classifying asteroids as hazardous or not. The closer an asteroid's orbit intersects with others, the more it influences the hazard classification.
-
-Jupiter Tisserand Invariant, Epoch Osculation, Eccentricity, Semi Major Axis, Inclination, Asc Node Longitude, and Perihelion Distance: These features exhibit varying importance scores. While they may not be as influential as absolute magnitude or asteroid size, they still contribute to the model's predictive ability to some extent. These parameters play a role in shaping the model's understanding of asteroid hazard.
-
-
+Influential Features:
+The “Inclination” and “Perihelion.Distance” features have the highest feature importance scores, with values of 124.4 and 130.1, respectively. This suggests that these two features significantly impact the model’s ability to classify asteroids as hazardous or not.
+Moderate Importance:
+Features like “Absolute.Magnitude,” “Est.Dia.in.KM.min.,” “Est.Dia.in.KM.max.,” “Relative.Velocity.km.per.sec,” “Jupiter.Tisserand.Invariant,” “Eccentricity,” “Semi.Major.Axis,” and “Mean.Motion” also have importance scores above 50. These features contribute meaningfully to the model’s predictions.
+Low Importance:
+The features “Neo.Reference.ID,” “Name,” “Orbit.Uncertainty,” and “Aphelion.Dist” have relatively lower importance scores, all below 55. These features appear to have less influence on the model’s decision-making process.
 
 
 
