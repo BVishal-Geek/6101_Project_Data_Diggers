@@ -1,0 +1,230 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-11-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+data1<- read.csv("/Users/qibinhuang/Downloads/Asteroid_Hazard_Classification.csv")
+data <- data.frame(data1)
+
+```
+
+#
+
+```{r}
+library(caret)
+library(ROSE)
+library(DMwR)
+
+set.seed(123)  # Set a random seed for reproducibility
+splitIndex <- createDataPartition(data1$Hazardous, p = 0.80, list = FALSE)
+train_data <- data1[splitIndex, ]
+test_data <- data1[-splitIndex, ]
+
+table(train_data$Hazardous)  # Check the class distribution in the training set
+str(data1$Hazardous)
+train_data$Hazardous <- train_data$Hazardous + 1
+table(train_data$Hazardous)
+str(data1$Hazardous)
+```
+
+
+
+
+```{r}
+## Oversampling the minority class in the training data
+train_data_over <- ovun.sample(Hazardous ~ ., data = train_data, method = "over", N = 2 * nrow(train_data))$data
+
+summary(train_data_over)
+
+
+```
+
+```{r}
+## Undersampling
+library(caret)
+# Convert 'Hazardous' to a factor
+train_data$Hazardous <- as.factor(train_data$Hazardous)
+down_sampled <- downSample(x = train_data[, !names(train_data) %in% "Hazardous"], 
+                           y = train_data$Hazardous)
+
+table(down_sampled$Class)
+
+```
+
+```{r}
+library(caret)
+set.seed(123) # for reproducibility
+
+# Assuming 'data' is your dataset and 'Hazardous' is the target variable
+splitIndex <- createDataPartition(data$Hazardous, p = 0.80, list = FALSE)
+train_data <- data[splitIndex, ]
+test_data <- data[-splitIndex, ]
+
+#1. Logistic Regression
+# Check the levels of each factor variable
+sapply(train_data, function(x) if(is.factor(x)) levels(x))
+
+
+#2. Decision Trees
+library(rpart)
+model_tree <- rpart(Hazardous ~ ., data = train_data, method = "class")
+predictions_tree <- predict(model_tree, test_data, type = "class")
+
+
+```
+
+
+
+
+
+
+
+
+```{r}
+###Question 3 ： What will be the variables, such as Estimated Diameter, Orbital Characteristics, RelativVelocity, Diameter, that exert the most significant influence on the accuracy of models ?
+
+library(tidyverse)
+library(caret)
+library(randomForest)
+
+
+
+
+
+set.seed(123)  # Setting a seed for reproducibility
+train_index <- sample(1:nrow(data), 0.8 * nrow(data))  # 80% for training
+train_data <- data[train_index, ]
+test_data <- data[-train_index, ]
+##random forest
+train_data$Hazardous <- as.factor(train_data$Hazardous)
+test_data$Hazardous <- as.factor(test_data$Hazardous)
+
+#random forest model
+rf_model <- randomForest(Hazardous ~ ., data = train_data, na.action = na.omit)
+print(rf_model)
+
+#This model demonstrates high accuracy. It accurately classified 2491 non-hazardous objects (in here is TRUE negatives) with only 3 misclassifications (in here is FALSE positives), and correctly identified 445 hazardous objects (TRUE positives) with 14 misclassifications (FALSE negatives). The model's class error rates are low, at 0.12% for non-hazardous and 3.05% for hazardous classes. So The "Minimum.Orbit.Intersection" variable is highlighted as the most significant predictor in this classification task.
+
+
+# Generate predictions
+predictions <- predict(rf_model, test_data)
+# Generate a confusion matrix
+confusionMatrix <- table(Predicted = predictions, Actual = test_data$Hazardous)
+print(confusionMatrix)
+#The confusion matrix indicates the model's high accuracy, with only 3 incorrect predictions and very low rates of false positives and negatives. This proving the model's effectiveness in classifying objects as hazardous or non-hazardous.
+
+
+#evaulate
+
+importance(rf_model)
+varImpPlot(rf_model)
+#According to output and graph  the 'Minimum.Orbit.Intersection' is by far the most significant variable in the Random Forest model, as indicated by its high MeanDecreaseGini value. The Gini value more high means that the variable plays a more significant role.
+
+
+
+##compare with predict value
+
+
+library(caret)
+
+# Create a confusion matrix
+conf_matrix <- confusionMatrix(comparison$Predicted, comparison$Actual)
+
+# Output the confusion matrix and summary statistics
+print(conf_matrix)
+
+```
+
+
+
+```{r}
+#Question1
+# Do logistical regression
+## to make sure response variable is factor
+train_data$Hazardous <- as.factor(train_data$Hazardous)
+
+# Convert all other variables to numeric
+numeric_vars <- setdiff(names(train_data), "Hazardous")
+train_data[numeric_vars] <- lapply(train_data[numeric_vars], function(x) as.numeric(as.character(x)))
+
+# Check for any conversion errors
+sapply(train_data, function(x) sum(is.na(x)))
+
+
+# Delete NA row
+train_data_clean <- na.omit(train_data)
+
+
+train_data_clean$Hazardous <- as.factor(train_data_clean$Hazardous)
+
+# check
+sapply(train_data_clean, class)
+
+# Delete these variable: Close.Approach.Date, Orbiting.Body, Orbit.Determination.Date and Equinox。
+train_data_clean$Close.Approach.Date <- NULL
+train_data_clean$Orbiting.Body <- NULL
+train_data_clean$Orbit.Determination.Date <- NULL
+train_data_clean$Equinox <- NULL
+train_data_clean$Name <- NULL
+
+
+str(train_data_clean)
+
+logistic_model <- glm(Hazardous ~ ., family = binomial(link = "logit"), data = train_data_clean)
+
+summary(logistic_model)
+##something wrong, so we need to deal with multicollinearity
+# Keep one variable and remain another
+train_data_reduced <- train_data_clean %>%
+  select(-Est.Dia.in.KM.max., -Est.Dia.in.Feet.min., -Est.Dia.in.Feet.max.)
+# Do 'Est.Dia.in.KM.min.' log transfer also add 1 to avoid 0 for log
+train_data_reduced$Est.Dia.in.KM.min.log <- log(train_data_reduced$Est.Dia.in.KM.min. + 1)
+
+# Try model again
+logistic_model_revised <- glm(Hazardous ~ . - Est.Dia.in.KM.min., 
+                              family = binomial(link = "logit"), 
+                              data = train_data_reduced)
+
+summary(logistic_model_revised)
+
+##The added logarithmic conversion variable Est.Dia.in.KM.min.log significantly affects the target variable Hazardous, which has a significant coefficient and a high z value. This shows that the transformation helps to improve the explanatory power of the model.
+## we still need do some change
+
+# check the variable distribution
+table(train_data_reduced$Hazardous)
+
+# Apply resampling technique
+
+library(ROSE)
+train_data_balanced <- ovun.sample(Hazardous ~ ., data = train_data_reduced, method = "both", N = 2000)$data
+
+# Refit the model
+logistic_model_balanced <- glm(Hazardous ~ ., family = binomial, data = train_data_balanced)
+
+# Predict
+test_data$Est.Dia.in.KM.min.log <- log(test_data$Est.Dia.in.KM.min. + 1)
+
+predictions <- predict(logistic_model_balanced, test_data, type = "response")
+predicted_class <- ifelse(predictions > 0.5, "TRUE", "FALSE")
+predicted_class <- as.factor(predicted_class)
+
+# calculate
+conf_matrix <- table(Predicted = predicted_class, Actual = test_data$Hazardous)
+print(conf_matrix)
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+print(paste("Accuracy:", accuracy))
+
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
