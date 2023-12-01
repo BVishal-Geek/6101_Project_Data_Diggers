@@ -74,15 +74,7 @@ test_data <- data[-splitIndex, ]
 
 #1. Logistic Regression
 # Check the levels of each factor variable
-sapply(train_data, function(x) if(is.factor(x)) levels(x))
-
-
-#2. Decision Trees
-library(rpart)
-model_tree <- rpart(Hazardous ~ ., data = train_data, method = "class")
-predictions_tree <- predict(model_tree, test_data, type = "class")
-
-
+sapply(train_data, function(x) if(is.factor(x)) levels(
 ```
 
 
@@ -226,5 +218,7 @@ print(conf_matrix)
 accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
 print(paste("Accuracy:", accuracy))
 
+
+#
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
