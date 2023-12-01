@@ -77,11 +77,6 @@ test_data <- data[-splitIndex, ]
 sapply(train_data, function(x) if(is.factor(x)) levels(x))
 
 
-#2. Decision Trees
-library(rpart)
-model_tree <- rpart(Hazardous ~ ., data = train_data, method = "class")
-predictions_tree <- predict(model_tree, test_data, type = "class")
-
 
 ```
 
@@ -225,6 +220,11 @@ conf_matrix <- table(Predicted = predicted_class, Actual = test_data$Hazardous)
 print(conf_matrix)
 accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
 print(paste("Accuracy:", accuracy))
+
+
+##The methods of oversampling and undersampling help the model learn and recognize the features of each class better by adjusting the number of samples between classes. In my logistic regression model, I resampled the ROSE package to balance the class distribution of the target variable Hazardous. This is mainly achieved by a combination of oversampling a minority class (i.e. hazardous objects) and undersampling a majority class (i.e. non-hazardous objects). By this method model can learn the features of these samples more fully during training.
+##The effect of this approach can be seen in the performance of the final model. Prior to the use of resampling techniques, models might be overly biased toward predicting the majority of classes, resulting in inadequate recognition of minority classes. But after applying resampling, the accuracy of the model improved significantly to about 95.26%, indicating that the model performed better at balancing the two categories.
+##In general, techniques such as oversampling, undersampling, and SMOTE help improve the model's predictive power for all classes by balancing class proportions, thereby enhancing the overall performance of the model.
 
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
