@@ -226,5 +226,90 @@ print(paste("Accuracy:", accuracy))
 ##The effect of this approach can be seen in the performance of the final model. Prior to the use of resampling techniques, models might be overly biased toward predicting the majority of classes, resulting in inadequate recognition of minority classes. But after applying resampling, the accuracy of the model improved significantly to about 95.26%, indicating that the model performed better at balancing the two categories.
 ##In general, techniques such as oversampling, undersampling, and SMOTE help improve the model's predictive power for all classes by balancing class proportions, thereby enhancing the overall performance of the model.
 
+
+library(dplyr)
+library(lubridate)
+
+# clean some outlier
+remove_outliers <- function(data, column) {
+  Q1 <- quantile(data[[column]], 0.25, na.rm = TRUE)
+  Q3 <- quantile(data[[column]], 0.75, na.rm = TRUE)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  data[data[[column]] >= lower_bound & data[[column]] <= upper_bound, ]
+}
+
+# Log transfer
+reduce_skewness <- function(data, column) {
+  data[[column]] <- log(data[[column]] + 1)
+  data
+}
+
+num_vars <- c('Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.', 'Est.Dia.in.Feet.min.', 
+              'Est.Dia.in.Feet.max.', 'Epoch.Date.Close.Approach', 'Relative.Velocity.km.per.sec', 
+              'Miss.Dist..Astronomical.', 'Miss.Dist..lunar.', 'Miss.Dist..kilometers.', 
+              'Orbit.ID', 'Orbit.Uncertainity', 'Minimum.Orbit.Intersection', 'Jupiter.Tisserand.Invariant', 
+              'Epoch.Osculation', 'Eccentricity', 'Semi.Major.Axis', 'Inclination', 'Asc.Node.Longitude', 
+              'Orbital.Period', 'Perihelion.Distance', 'Perihelion.Arg', 'Aphelion.Dist', 'Perihelion.Time', 
+              'Mean.Anomaly', 'Mean.Motion')
+
+for (var in num_vars) {
+  your_data <- remove_outliers(data, var)
+  your_data <- reduce_skewness(data, var)
+}
+
+
+date_vars <- c('Close.Approach.Date', 'Orbit.Determination.Date')
+
+for (var in date_vars) {
+  your_data[[var]] <- ymd_hms(your_data[[var]])
+}
+
+str(your_data)
+
+
+library(dplyr)
+library(lubridate)
+
+# transfer these variables to factor
+your_data$Orbiting.Body <- as.factor(your_data$Orbiting.Body)
+your_data$Equinox <- as.factor(your_data$Equinox)
+
+# delete the date column
+your_data <- select(your_data, -c(Close.Approach.Date, Orbit.Determination.Date, Year, Month, Day, Hour, Minute))
+
+```
+
+
+
+
+
+```{r}
+library(ggplot2)
+library(corrplot)
+
+# 1. boxplot
+ggplot(data1, aes(x = as.factor(Hazardous), y = Est.Dia.in.KM.min.)) +
+  geom_boxplot() +
+  xlab("Hazardous") +
+  ylab("Estimated Diameter (KM)")
+
+# 2. scatterplot
+ggplot(data1, aes(x = Est.Dia.in.KM.min., y = Relative.Velocity.km.per.sec)) +
+  geom_point(aes(color = as.factor(Hazardous))) +
+  xlab("Estimated Diameter (KM)") +
+  ylab("Relative Velocity (km/s)")
+
+# 3. correlation matrix
+numeric_vars <- data1[, sapply(data1, is.numeric)]
+corr_matrix <- cor(numeric_vars, use = "complete.obs")
+corrplot(corr_matrix, method = "circle")
+
+
+
+
+
+
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
