@@ -309,7 +309,86 @@ corrplot(corr_matrix, method = "circle")
 
 
 
+```{r}
+library(ggplot2)
+library(rpart)
+library(rpart.plot)
 
+# Visualization
+
+# Estimated Diameter vs Hazardous
+ggplot(data1, aes(x = Est.Dia.in.KM.min., fill = as.factor(Hazardous))) +
+  geom_histogram(bins = 30) +
+  labs(title = "Estimated Diameter vs Hazardous", x = "Estimated Diameter (KM)", y = "Count")
+#This histogram displays the vast majority of asteroids, both hazardous and non-hazardous, have smaller diameters, with counts dropping off as diameter increases. There is an overlap in the diameter ranges of hazardous and non-hazardous asteroids, suggesting that diameter alone may not be a definitive predictor of hazard.
+
+# Orbital Inclination vs Hazardous
+ggplot(data1, aes(x = Inclination, fill = as.factor(Hazardous))) +
+  geom_histogram(bins = 30) +
+  labs(title = "Orbital Inclination vs Hazardous", x = "Inclination (Degrees)", y = "Count")
+
+#This histogram illustrates the relationship between the orbital inclination of asteroids and their classification as hazardous. There is a noticeable concentration of non-hazardous asteroids at lower inclinations, while hazardous asteroids are more evenly distributed across a range of inclinations.
+
+
+# Relative.Velocity.km.per.sec
+ggplot(data1, aes(x = Relative.Velocity.km.per.sec, fill = as.factor(Hazardous))) +
+  geom_histogram(bins = 30) +
+  labs(title = "Relative Velocity vs Hazardous", x = "Relative Velocity (km/sec)", y = "Count")
+#This histogram shows the distribution of asteroids' relative velocity, divided by hazard classification. Both hazardous and non-hazardous asteroids exhibit a wide range of velocities, but there is a significant number of hazardous asteroids at higher velocities.
+
+
+# build decision tree
+
+# using Est.Dia.in.KM.min., Relative.Velocity.km.per.sec, Inclination as predict variable
+decision_tree_model <- rpart(Hazardous ~ Est.Dia.in.KM.min. + Relative.Velocity.km.per.sec + Inclination, 
+                             data = data1, 
+                             method = "class")
+
+rpart.plot(decision_tree_model)
+
+#The decision tree model shows that smaller estimated diameters (Est.Dia.in.KM.min.) are predominantly classified as non-hazardous. As the diameter increases, the inclination becomes a factor, with asteroids having an inclination greater than or equal to 6.5 degrees being more frequently classified as hazardous. Additionally, asteroids with relative velocity less than 5.9 km/sec are also more likely to be classified as hazardous.
+
+
+```
+
+
+```{r}
+library(ggplot2)
+
+numeric_vars <- data1[, sapply(data1, is.numeric)]
+
+# standard data
+numeric_vars_scaled <- scale(numeric_vars)
+
+pca_result <- prcomp(numeric_vars_scaled)
+
+summary(pca_result)
+
+# Scatterplot
+pca_data <- as.data.frame(pca_result$x)
+ggplot(pca_data, aes(x = PC1, y = PC2, color = data1$Hazardous)) +
+  geom_point() +
+  labs(title = "PCA - First two principal components", x = "PC1", y = "PC2")
+
+
+#The PCA scatter plot analysis of asteroid data shows significant overlap between hazardous and non-hazardous asteroids within the first two principal components (PC1 and PC2), indicating that these components might not be adequate for a distinct classification of asteroids by hazard potential. Although PC1 and PC2 capture a considerable amount of data variability, the spread along the PC1 axis, especially for non-hazardous asteroids, suggests that there are other important dimensions of variability not encompassed by these two components.
+
+
+#The PCA component importance analysis reveals that the first two principal components, PC1 and PC2, account for 25.84% and 19.81% of the data's variance respectively, totaling 45.65%. This suggests the need for additional components to capture the majority of the data's variance. The cumulative variance increases more slowly after the tenth component, indicating the necessity of a large number of components to explain a significant portion of the total variance. To reach a typical threshold of 70-90% cumulative variance for a comprehensive analysis, incorporating more than the first two principal components is essential.
+
+#Conclusion:
+
+#The PCA analysis shows that the first two principal components, though capturing significant variance, are insufficient for effectively distinguishing hazardous from non-hazardous asteroids. A more accurate classification may require additional components or alternative dimensionality reduction methods. Incorporating domain-specific knowledge could also improve the model's interpretability and classification accuracy.
+
+
+
+
+
+
+
+
+
+```
 
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
