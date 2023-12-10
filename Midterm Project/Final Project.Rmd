@@ -17,7 +17,6 @@ When you click the **Knit** button a document will be generated that includes bo
 ```{r}
 data1<- read.csv("/Users/qibinhuang/Downloads/Asteroid_Hazard_Classification.csv")
 data <- data.frame(data1)
-
 ```
 
 #

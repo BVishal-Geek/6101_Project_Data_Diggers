@@ -1,0 +1,235 @@
+---
+title: "Balancing NASA's Asteroid Dataset and Buiding Models for Predicting Hazard Levels "
+author: "Vishal Bakshi, Pratiksha Dange, Sudanshu Dotel, Qibin Huang"
+output: 
+  prettydoc::html_pretty:
+    theme: cayman
+    toc: yes
+---
+
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+### Importing Dataset 
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+df <- read.csv('/Users/pratikshadange/Documents/GitHub/6101_Project_Data_Diggers/Datasets/Asteroid_Hazard_Classification.csv')
+
+head(df)
+
+
+```
+### check Null Values
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+null_values <- colSums(is.na(df))
+print("Null Values in Each Column:")
+print(null_values)
+```
+# Display data types of all columns
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+print("Data Types of Columns:")
+str(df)
+
+```
+
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+# Remove the 'Equinox' column using subset()
+df <- subset(df, select = -c(Equinox))
+# Display the first few rows of the updated DataFrame
+head(df)
+
+```
+
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+# Convert Hazardous column values to integers (1 for TRUE, 0 for FALSE)
+
+df$Hazardous <- ifelse(df$Hazardous == TRUE, 1, 0)
+
+# Display the first few rows of the updated DataFrame
+head(df)
+```
+### Hazardous vs Non-Hazardous Plot
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+# Load the ggplot2 library
+library(ggplot2)
+
+# Count the occurrences of 0s and 1s in the 'Hazardous' column
+hazardous_counts <- table(df$Hazardous)
+
+# Create a bar plot
+barplot(hazardous_counts, 
+        main = 'Distribution of Hazardous Asteroids (0: Not Hazardous, 1: Hazardous)',
+        xlab = 'Hazardous',
+        ylab = 'Count',
+        col = c('skyblue', 'salmon'),
+        ylim = c(0, max(hazardous_counts) + 1),
+        names.arg = c('Not Hazardous', 'Hazardous'),
+        beside = TRUE)
+
+# Add counts on top of the bars
+text(x = barplot(hazardous_counts, plot = FALSE), 
+     y = ifelse(hazardous_counts > 0, hazardous_counts + 0.1, 0.1), 
+     labels = as.character(hazardous_counts), 
+     pos = 3)
+
+```
+
+# Display the number of unique values in each object-type variable
+```{r, include=TRUE, echo=TRUE, results='asis'}
+# Select columns of type 'character'
+object_columns <- sapply(df, class) == "character"
+
+# Calculate the number of unique values for each 'character' column
+unique_values <- sapply(df[, object_columns], function(x) length(unique(x)))
+
+# Display the number of unique values in each 'character' column
+for (i in seq_along(unique_values)) {
+  cat("Number of unique values in '", names(unique_values)[i], "': ", unique_values[i], "\n")
+}
+
+```
+
+### Handeling Dataset
+
+
+# Identify columns to drop
+```{r, include=TRUE, echo=TRUE, results='asis'}
+columns_to_drop <- c('Orbiting.Body', 'Close.Approach.Date', 'Orbit.Determination.Date','Neo.Reference.ID','Name','Epoch.Date.Close.Approach','Equinox','Orbit.Determination.Date')
+
+#drop identified columns
+df <- df[, !(names(df) %in% columns_to_drop)]
+
+
+# Display the first few rows of the updated DataFrame
+head(df)
+
+# Display column names after dropping specific columns
+remaining_columns <- colnames(df)
+print(remaining_columns)
+
+```
+
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+
+library(reshape2)
+library(ggplot2)
+
+cor_matrix <- cor(df[, !names(df) %in% c("Hazardous")])
+print(cor_matrix)
+
+# Visualization - create a heatmap of the correlation matrix
+cor_melted <- melt(cor_matrix)
+ggplot(data = cor_melted, aes(Var1, Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limit = c(-1, 1)) +
+  theme_minimal() +
+  labs(title = "Correlation Heatmap")
+```
+```{r, include=TRUE, echo=TRUE, results='asis'}
+# Find highly correlated variable pairs
+threshold <- 0.7
+highly_correlated <- which(cor_matrix > threshold & cor_matrix < 1, arr.ind = TRUE)
+print(highly_correlated)
+
+# Remove redundant variables
+reduced_df <- df[, -unique(highly_correlated[, 2])]
+```
+# Remove Redundant features having high correlation
+```{r, include=TRUE, echo=TRUE, results='asis'}
+names_to_remove <- c(
+  
+  "Est.Dia.in.Feet.min.",
+  "Miss.Dist..lunar.",
+  "Miss.Dist..Astronomical.",
+  "Est.Dia.in.KM.min.",
+  "Est.Dia.in.Feet.max.",
+  "Perihelion.Time",
+  "Aphelion.Dist",
+  "Orbital.Period",
+  "Semi.Major.Axis",
+  "Epoch.Osculation"
+)
+
+# Create a new dataframe excluding redundant variables
+reduced_df <- df[, !names(df) %in% names_to_remove]
+reduced_df
+```
+# Check for Linear Dependence
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+lm_model <- lm(Hazardous ~ ., data = df)
+# Check for linear dependencies
+linear_deps <- stats::alias(lm_model)
+print(linear_deps)
+```
+
+
+
+# check for Multi collinarity and drop it
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+library(car)
+vif_values <- car::vif(lm(Hazardous ~ ., data = reduced_df))
+
+# Identify variables with high VIF
+high_vif_vars <- names(vif_values)[vif_values > 5]  
+# Remove variables with high VIF or high correlation
+reduced_df <- df[, !names(df) %in% high_vif_vars]
+```
+
+### checking outliers
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+columns_to_check <- names(reduced_df)[names(reduced_df) != "Hazardous"]
+
+for (col in columns_to_check) {
+  boxplot(reduced_df[[col]], main = col, col = 'skyblue')  
+}
+  
+```
+# Romove Outlier
+```{r, include=TRUE, echo=TRUE, results='asis'}
+# Function to remove outliers based on IQR
+remove_outliers <- function(x) {
+  Q1 <- quantile(x, 0.25)
+  Q3 <- quantile(x, 0.75)
+  IQR_val <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR_val
+  upper_bound <- Q3 + 1.5 * IQR_val
+  return(ifelse(x >= lower_bound & x <= upper_bound, x, NA))
+}
+
+# Loop through columns (except 'Hazardous') and remove outliers
+for (col in columns_to_check) {
+  reduced_df[[col]] <- remove_outliers(reduced_df[[col]])
+}
+
+# Remove rows containing NA values after outlier removal
+reduced_df <- reduced_df[complete.cases(reduced_df), ]
+reduced_df
+
+```
+# check for skewness
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+```
+
+# Balance the dataset using SMOTE
+```{r, include=TRUE, echo=TRUE, results='asis'}
+
+
+```
+
+
