@@ -167,7 +167,8 @@ for (col in columns_to_check) {
 
 # Remove rows containing NA values after outlier removal
 reduced_df <- reduced_df[complete.cases(reduced_df), ]
-reduced_df
+
+str(reduced_df)
 
 ```
 
@@ -187,6 +188,52 @@ for(col in colnames(reduced_df[1:19])) {
 
 
 ```
+### Checking for Non-Null Values
+
+```{r}
+
+null_values <- colSums(is.na(reduced_df))
+print("Null Values in Each Column:")
+print(null_values)
+
+```
+
+### Skewness check using QQ-Plot
+
+```{r}
+qqplt <- function(df, col) {
+  
+  # Before Outlier Removal
+  if (!all(is.na(Filtered_data[[col]]))) {
+    qqnorm(Filtered_data[[col]], main = paste("Before Outlier Removal", col))
+    qqline(Filtered_data[[col]])
+  } else {
+    cat("Skipping plot for", col, "due to missing or NA values.\n")
+  }
+  
+  # After Outlier Removal
+  if (!all(is.na(reduced_df[[col]]))) {
+    qqnorm(reduced_df[[col]], main = paste("After Outlier Removal", col))
+    qqline(reduced_df[[col]])
+  } else {
+    cat("Skipping plot for", col, "due to missing or NA values after outlier removal.\n")
+  }
+}
+
+# Assuming 'columns_to_check' is a vector containing the column names you want to check
+
+for (col in columns_to_check) {
+  qqplt(df,col)
+}
+
+```
 
 
+### Skewness removal
+
+```{r}
+# Applying Log Transforamtion on diameter. 
+
+
+```
 
