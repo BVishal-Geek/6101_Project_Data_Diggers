@@ -59,9 +59,11 @@ mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
 
 Ast_raw$Hazardous <- as.factor(Ast_raw$Hazardous)
 
-kable(Ast_raw, "html") %>%
-  kable_paper(full_width = FALSE) %>% 
-  scroll_box(width = "100%", height = "400px")
+#kable(Ast_raw, "html") %>%
+  #kable_paper(full_width = FALSE) %>% 
+  #scroll_box(width = "100%", height = "400px")
+
+head(Ast_raw)
 
 
 
@@ -74,7 +76,7 @@ kable(Ast_raw, "html") %>%
 
 # According to the domain knowledge we acquired from the specific domain, these are the important variables which is mostly affecting the asteroid to be hazardous. 
 
-selected_columns <- c('Absolute.Magnitude', 'Est.Dia.in.KM.min.', 'Est.Dia.in.KM.max.','Miss.Dist..kilometers.','Relative.Velocity.km.per.sec', 'Minimum.Orbit.Intersection','Jupiter.Tisserand.Invariant','Epoch.Osculation' ,'Eccentricity', 'Semi.Major.Axis', 'Inclination','Asc.Node.Longitude' ,'Orbital.Period' ,'Perihelion.Distance','Perihelion.Arg', 'Perihelion.Time','Mean.Anomaly','Aphelion.Dist', 'Mean.Motion', 'Hazardous')
+selected_columns <- c('Absolute.Magnitude', 'Est.Dia.in.KM.max.','Miss.Dist..kilometers.','Relative.Velocity.km.per.sec', 'Minimum.Orbit.Intersection','Jupiter.Tisserand.Invariant', 'Eccentricity', 'Semi.Major.Axis', 'Inclination','Asc.Node.Longitude' ,'Orbital.Period' ,'Perihelion.Distance','Perihelion.Arg', 'Perihelion.Time','Mean.Anomaly','Aphelion.Dist', 'Mean.Motion', 'Hazardous')
 
 Filtered_data <- subset(Ast_raw, select = selected_columns)
 
@@ -91,9 +93,8 @@ Filtered_data
 ```{r, include= TRUE, echo=TRUE, results='markup'}
 
 library(corrplot)
-Filtered_data = Filtered_data[1:20]
 
-subset <- as.data.frame(lapply(Filtered_data, as.numeric))
+subset <- as.data.frame(lapply(Filtered_data[1:17], as.numeric))
 par(mfrow = c(1, 1)) # Adjust mar and oma for margins
 
 M = cor(subset)
@@ -111,12 +112,12 @@ Some of the columns are showing high multi-collinearity. We are dropping them su
 ```{r}
 histplots <- function(column) {
   Plot <- ggplot(Filtered_data, aes_string(x = column, group = "1")) +
-    geom_histogram(bins=30)  + ggtitle("Hist Plots", column )
+    geom_histogram(color="green",bins=30)  + ggtitle("Hist Plots", column )
   return(Plot)
   
 }
 
-for(col in colnames(Filtered_data[1:19])) { 
+for(col in colnames(Filtered_data[1:17])) { 
   print(histplots(col))
 }
 
@@ -126,14 +127,13 @@ for(col in colnames(Filtered_data[1:19])) {
 
 ```{r}
 str(Filtered_data)
-
 boxPlots <- function(column){
   Plot <- ggplot(Filtered_data, aes_string(x = column, group = "1")) +
     geom_boxplot() + coord_flip() + ggtitle("Box Plots", column )
   return(Plot)
 }
 
-for(col in colnames(Filtered_data[1:19])) { 
+for(col in colnames(Filtered_data[1:17])) { 
   print(boxPlots(col))
 }
 
@@ -148,8 +148,8 @@ By carefully observing the box plots, there are some of the variables which have
 
 ```{r}
 reduced_df <- Filtered_data
-columns_to_check <- names(reduced_df)[names(reduced_df) != "Hazardous"]
 
+columns_to_check <- c("Est.Dia.in.KM.max.","Relative.Velocity.km.per.sec", "Minimum.Orbit.Intersection", "Semi.Major.Axis", "Inclination", "Orbital.Period", "Perihelion.Time", "Aphelion.Dist", "Mean.Motion")
 # Function to remove outliers based on IQR
 remove_outliers <- function(x) {
   Q1 <- quantile(x, 0.25)
@@ -172,6 +172,7 @@ str(reduced_df)
 
 ```
 
+
 ### Box Plots After Outlier Removal. 
 
 ```{r}
@@ -182,7 +183,7 @@ boxPlots_ <- function(column){
   return(Plot)
 }
 
-for(col in colnames(reduced_df[1:19])) { 
+for(col in colnames(reduced_df[1:17])) { 
   print(boxPlots_(col))
 }
 
@@ -232,8 +233,70 @@ for (col in columns_to_check) {
 ### Skewness removal
 
 ```{r}
-# Applying Log Transforamtion on diameter. 
+# Applying Log Transformation on diameter. 
+# Assuming your data frame is named 'reduced_df'
+# Perform log transformation
 
+reduced_df[["Log_Est_Diameter"]] <- log(reduced_df[["Est.Dia.in.KM.max."]])
+
+hist(reduced_df$Est.Dia.in.KM.max., main = "Histogram of Diameter Before Log Transformation")
+hist(reduced_df$Log_Est_Diameter, main = "Histogram of Diameter After Log Transformation")
 
 ```
+
+```{r}
+# As we already have the `Log Transformation of Estimated Diameter`. We can drop `Est.Dia.in.KM.max.`. We will create two variables for `No Sampling` and for `SMOTE Sampling`.
+data1 <- reduced_df[,-which(names(reduced_df) == "Est.Dia.in.KM.max.")]
+dataSmote <- reduced_df[,-which(names(reduced_df) == "Est.Dia.in.KM.max.")]
+```
+
+```{r}
+str(data1$Hazardous)
+
+```
+
+```{r}
+# Check for Multicollinearity using Variance Inflation Factor. 
+library(car)
+# Assuming Hazardous is a binary outcome (0 or 1)
+logistic_model <- glm(Hazardous ~ ., data = data1, family = "binomial")
+
+# Check VIF for multicollinearity
+vif_values <- car::vif(logistic_model)
+
+# Print variables with VIF greater than or equal to 10
+high_vif_variables <- names(vif_values)[vif_values >= 10]
+print(high_vif_variables)
+
+```
+
+```{r}
+# Since we have Multi-Collineairity with "Absolute.Magnitude", "Jupiter.Tisserand.Invariant" "Orbital.Period", "Aphelion.Dist", "Mean.Motion". However, Absolute Magnitiude, Jupiter Tisserand Invariant are very important columns. 
+
+# Assuming you want to remove specific columns from reduced_df
+columns_to_remove <- c("Orbital.Period", "Aphelion.Dist", "Mean.Motion")
+
+data1 <- reduced_df[, -which(names(reduced_df) %in% columns_to_remove)]
+dataSmote <- reduced_df[, -which(names(reduced_df) %in% columns_to_remove)]
+```
+
+```{r}
+# Count plot using ggplot2
+ggplot(data1, aes(x = Hazardous, fill = Hazardous)) +
+  geom_bar() +
+  labs(title = 'Distribution of Hazardous Asteroids (0: Not Hazardous, 1: Hazardous)',
+       x = 'Hazardous',
+       y = 'Count') +
+  scale_fill_manual(values = c('skyblue', 'salmon')) +
+  theme_minimal()
+```
+
+```{r}
+# SMOTE Analysis: 
+library(ROSE)
+SMOTE(form, dataSmote, perc.over = 200, k = 5, perc.under = 200, learner = NULL, ...)
+
+```
+
+
 
