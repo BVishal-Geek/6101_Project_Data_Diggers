@@ -292,11 +292,43 @@ ggplot(data1, aes(x = Hazardous, fill = Hazardous)) +
 ```
 
 ```{r}
-# SMOTE Analysis: 
+
 library(ROSE)
-SMOTE(form, dataSmote, perc.over = 200, k = 5, perc.under = 200, learner = NULL, ...)
+library(smotefamily)
+library(ggplot2)
+
+# Assuming Hazardous is a binary factor variable
+data1$Hazardous <- as.factor(data1$Hazardous)
+
+# Applying SMOTE
+dataSmote_rose <- ovun.sample(Hazardous ~ ., data = data1, method = "over")
+
+# Extracting the sampled data
+dataSmote <- dataSmote_rose$data
+
+# Count plot using ggplot2
+ggplot(dataSmote, aes(x = Hazardous, fill = Hazardous)) +
+  geom_bar() +
+  labs(title = 'After Distribution of Hazardous Asteroids (0: Not Hazardous, 1: Hazardous)',
+       x = 'Hazardous',
+       y = 'Count') +
+  scale_fill_manual(values = c('skyblue', 'salmon')) +
+  theme_minimal()
+
 
 ```
 
+### Pratiksha's Part 
 
+1. We have two variable with and without sampling. 
+2. without sampling: data1 
+3. with sampling: dataSmote
+
+Pending tasks to be implemented: 
+1. Logistic regression with data1(without sampling)
+2. Logistic regression with dataSmote(with sampling)
+3. Logistic regression with data 1(with sampling)
+
+1. Random Forest with data1(without sampling)
+2. Random Forest with dataSmote(with sampling)
 
