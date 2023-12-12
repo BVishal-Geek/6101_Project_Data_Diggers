@@ -361,3 +361,95 @@ summary(logistic_model_smote)
 1. Random Forest with data1(without sampling)
 2. Random Forest with dataSmote(with sampling)
 
+### Roger 
+
+1. Scatter plot for Diameter vs Velocity -- use data1 to do this
+2. Anova test for Diamter vs velocity w.r.t Hazardous
+#we have diameter column as Est Dia in KM MAX
+```{r}
+ggplot(data1, aes(x = Log_Est_Diameter, y = Relative.Velocity.km.per.sec)) +
+  geom_point() +
+  theme_minimal() +
+  labs(x = "Log Estimated Diameter", y = "Relative Velocity (km/sec)", title = "Scatter Plot of Log Estimated Diameter vs Relative Velocity")
+
+fit <- aov(Log_Est_Diameter ~ Relative.Velocity.km.per.sec * Hazardous, data = data1)
+summary(fit)
+
+
+```
+
+### Pratiksha's Part 
+
+1. Logistic regression with data1(without sampling)
+2. Logistic regression with dataSmote(with sampling)
+
+
+### Sudhanshu 
+3. Logistic regression with data 1(without sampling - Hyper Parameter Tuning)
+
+
+### Roger
+1. Random Forest with data1(without sampling)
+2. Random Forest with dataSmote(with sampling)
+```{r}
+library(randomForest)
+library(pROC)
+library(caret)
+#Random Forest with data1
+set.seed(123) # For reproducibility
+splitIndex <- createDataPartition(data1$Hazardous, p = .70, list = FALSE, times = 1)
+trainData <- data1[splitIndex,]
+testData <- data1[-splitIndex,]
+
+# Train the model
+rf_model <- randomForest(Hazardous ~ ., data = trainData)
+
+# Make predictions
+predictions <- predict(rf_model, testData)
+
+# Get probabilities
+probabilities <- predict(rf_model, testData, type="prob")
+
+# Compute AUC
+roc_result <- roc(testData$Hazardous, probabilities[,2]) # Assuming second column is the positive class
+auc(roc_result)
+
+# Plot ROC curve
+plot(roc_result, main="ROC Curve")
+
+# Calculate accuracy
+accuracy <- sum(predictions == testData$Hazardous) / nrow(testData)
+accuracy
+accuracy3 <- sum(predictions == trainData$Hazardous) / nrow(trainData)
+accuracy3
+
+
+
+##Random Forest with dataSmote
+
+set.seed(123) # For reproducibility
+splitIndex1 <- createDataPartition(data1$Hazardous, p = .70, list = FALSE, times = 1)
+trainData1 <- dataSmote[splitIndex,]
+testData1 <- dataSmote[-splitIndex,]
+
+# Train the model
+rf_model <- randomForest(Hazardous ~ ., data = trainData1)
+
+# Make predictions
+predictions <- predict(rf_model, testData1)
+
+# Get probabilities
+probabilities <- predict(rf_model, testData1, type="prob")
+
+# Compute AUC
+roc_result <- roc(testData1$Hazardous, probabilities[,2]) # Assuming second column is the positive class
+auc(roc_result)
+
+# Plot ROC curve
+plot(roc_result, main="Smote ROC Curve")
+
+# Calculate accuracy
+accuracy <- sum(predictions == testData1$Hazardous) / nrow(testData1)
+accuracy
+accuracy1 <- sum(predictions == trainData1$Hazardous) / nrow(trainData1)
+accuracy1
