@@ -280,7 +280,7 @@ dataSmote <- dataSmote[, -which(names(dataSmote) %in% columns_to_remove)]
 # Count plot using ggplot2
 ggplot(data1, aes(x = Hazardous, fill = Hazardous)) +
   geom_bar() +
-  labs(title = 'Distribution of Hazardous Asteroids (0: Not Hazardous, 1: Hazardous)',
+  labs(title = 'Distribution of Hazardous Asteroids - Before Sampling',
        x = 'Hazardous',
        y = 'Count') +
   scale_fill_manual(values = c('skyblue', 'salmon')) +
@@ -305,7 +305,7 @@ dataSmote <- dataSmote_rose$data
 # Count plot using ggplot2
 ggplot(dataSmote, aes(x = Hazardous, fill = Hazardous)) +
   geom_bar() +
-  labs(title = 'After Distribution of Hazardous Asteroids (0: Not Hazardous, 1: Hazardous)',
+  labs(title = 'After Distribution of Hazardous Asteroids - After SMOTE',
        x = 'Hazardous',
        y = 'Count') +
   scale_fill_manual(values = c('skyblue', 'salmon')) +
