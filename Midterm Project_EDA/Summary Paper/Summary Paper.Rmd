@@ -28,6 +28,7 @@ Imagine the vastness of outer space, with its countless stars and planets. Among
 <p>Before we delve into this project, let's first grasp what asteroids are. Giuseppe was the first to discover an asteroid, Ceres, orbiting between Mars and Jupiter. Since then, various space organizations, including NASA, have diligently studied these celestial objects. 
 <p>Asteroids, often referred to as minor planets, primarily reside in the inner Solar System. Some of the larger ones have even earned the nickname "planetoids." It's important to note that the number of asteroids is immense, with millions of them scattered throughout space.
 <p>Think of asteroids as space rocks that journey around the Sun. They primarily occupy an area known as the asteroid belt, a celestial highway situated between Mars and Jupiter. These asteroids come in different sizes. While some are small and pose no threat, others are substantial and could potentially have a significant impact on Earth.
+
 <p>**Prior Research:**
 <P>Previous research and analysis have extensively explored the classification of asteroids and their potential hazards. Scientists and space agencies, including NASA, have been actively engaged in studying asteroids to understand their characteristics and predict their behavior. 
 <p>This research covered asteroid classification, orbital dynamics, impact risk assessment, deflection strategies, asteroid databases, space missions, and planetary defense strategies.
