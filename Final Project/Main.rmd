@@ -334,6 +334,23 @@ Pending tasks to be implemented:
 #test
 1. Logistic regression with data1(without sampling)
 2. Logistic regression with dataSmote(with sampling)
+```{r}
+# Logistic Regression without Sampling
+
+
+data1$Hazardous <- as.factor(data1$Hazardous)
+logistic_model <- glm(Hazardous ~ ., data = data1, family = "binomial") 
+summary(logistic_model) 
+```
+
+```{r}
+
+# Logistic Regression with Sampling
+
+logistic_model_smote <- glm(Hazardous ~ ., data = dataSmote, family = "binomial")   
+summary(logistic_model_smote)
+```
+
 
 
 ### Sudhanshu 
