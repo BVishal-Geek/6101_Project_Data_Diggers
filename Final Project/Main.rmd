@@ -31,7 +31,7 @@ library(psych)
 ```
 
 
-## Importing Dataset & Checking Summary Statistics
+## Step:1: Importing Dataset & Checking Summary Statistics
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 # current_directory <- "/Users/vishal/Desktop/Way to New World/University/01_All_Semesters/01_Semester/03_Projects/01_DS/6101_Project_Data_Diggers/"
@@ -39,19 +39,19 @@ library(psych)
 # file_path <- file.path(dirname(current_directory), data_path)
 Ast_raw <- data.frame(read.csv("Asteroid_Hazard_Classification.csv"))
 
-Ast_raw
-#kable(summary(Ast_raw), "html") %>%
-  #kable_paper(full_width = FALSE) %>% 
-  #scroll_box(width = "100%", height = "400px")
+
+kable(summary(Ast_raw), "html") %>%
+  kable_paper(full_width = FALSE) %>% 
+  scroll_box(width = "100%", height = "400px")
 
 
 ```
 
 
 
-## Data Preprocessing
+## Step:2: Data Preprocessing
 
-### Step : 1 : Converting the Hazard column from string to integer, and into categorical.
+### Step : 2.1 : Converting the Hazard column from string to integer, and into categorical.
 
 ```{r, include=TRUE, echo=TRUE, results='show'}
 Ast_raw <- Ast_raw %>%
@@ -59,18 +59,17 @@ mutate(Hazardous = as.integer(Hazardous))#(1 is True, 0 is False)
 
 Ast_raw$Hazardous <- as.factor(Ast_raw$Hazardous)
 
-#kable(Ast_raw, "html") %>%
-  #kable_paper(full_width = FALSE) %>% 
-  #scroll_box(width = "100%", height = "400px")
+kable(Ast_raw, "html") %>%
+  kable_paper(full_width = FALSE) %>% 
+  scroll_box(width = "100%", height = "400px")
 
-head(Ast_raw)
 
 
 
 ```
 
 
-### Step : 2 : Dropping columns which are not required for our analysis:
+### Step : 2.2 : Dropping columns which are not required for our analysis:
 
 ```{r, include=TRUE, echo=TRUE, results='asis'}
 
@@ -81,14 +80,14 @@ selected_columns <- c('Absolute.Magnitude', 'Est.Dia.in.KM.max.','Miss.Dist..kil
 Filtered_data <- subset(Ast_raw, select = selected_columns)
 
 # Create a nicely formatted table
-#kable(Ast_Subset, "html") %>%
-  #kable_paper(full_width = FALSE) %>% 
-  #scroll_box(width = "100%", height = "400px")
-Filtered_data
+kable(head(Filtered_data), "html") %>%
+  kable_paper(full_width = FALSE) %>% 
+  scroll_box(width = "100%", height = "400px")
+
 
 ```
 
-### Step : 2.1: 
+### Step : 2.3: Correlation Plot 
 
 ```{r, include= TRUE, echo=TRUE, results='markup'}
 
@@ -100,19 +99,17 @@ par(mfrow = c(1, 1)) # Adjust mar and oma for margins
 M = cor(subset)
 corrplot(M, method = 'number', number.cex = 0.8, tl.cex = 0.8)
 
-# Note : Filtered Data is the data frame with outliers and skewness 
-
-
 ```
 The reason to drop the columns is to easily carry out the inferences and also according to the domain knowledge we acquired, the columns which we dropped are not very useful for our analysis. 
 
 Some of the columns are showing high multi-collinearity. We are dropping them such that we don't face any issue with the model. 
 
+### Step : 2.4 : Histogram Plot
 
-```{r}
+```{r, include=TRUE, echo=TRUE, results='markup'}
 histplots <- function(column) {
   Plot <- ggplot(Filtered_data, aes_string(x = column, group = "1")) +
-    geom_histogram(color="green",bins=30)  + ggtitle("Hist Plots", column )
+    geom_histogram(color="green", fill = "blue",bins=30)  + ggtitle("Hist Plots", column )
   return(Plot)
   
 }
@@ -123,9 +120,9 @@ for(col in colnames(Filtered_data[1:17])) {
 
 ```
 
-### Box Plots of all the variables
+### Step : 2.5: Box Plots of all the variables before outlier removal
 
-```{r}
+```{r, include=TRUE, echo=TRUE, results='markup'}
 str(Filtered_data)
 boxPlots <- function(column){
   Plot <- ggplot(Filtered_data, aes_string(x = column, group = "1")) +
@@ -144,9 +141,9 @@ for(col in colnames(Filtered_data[1:17])) {
 
 By carefully observing the box plots, there are some of the variables which have outliers and highly skewed. However we have to check the skewness after removing the outliers. 
 
-### Outlier Removal
+### Step : 2.6 : Outlier Removal
 
-```{r}
+```{r, include=TRUE, echo=TRUE, results='markup'}
 reduced_df <- Filtered_data
 
 columns_to_check <- c("Est.Dia.in.KM.max.","Relative.Velocity.km.per.sec", "Minimum.Orbit.Intersection", "Semi.Major.Axis", "Inclination", "Orbital.Period", "Perihelion.Time", "Aphelion.Dist", "Mean.Motion")
@@ -173,9 +170,9 @@ str(reduced_df)
 ```
 
 
-### Box Plots After Outlier Removal. 
+### Step : 2.7 : Box Plots of all the variables before outlier removal. 
 
-```{r}
+```{r, include=TRUE, echo=TRUE, results='markup'}
 
 boxPlots_ <- function(column){
   Plot <- ggplot(reduced_df, aes_string(x = column, group = "1")) +
@@ -189,17 +186,15 @@ for(col in colnames(reduced_df[1:17])) {
 
 
 ```
-### Checking for Non-Null Values
+### Step : 2.8 : Checking for Non-Null Values
 
-```{r}
-
+```{r, include=TRUE, echo=TRUE, results='markup'}
 null_values <- colSums(is.na(reduced_df))
-print("Null Values in Each Column:")
-print(null_values)
+null_values
 
 ```
 
-### Skewness check using QQ-Plot
+### Step : 2.9 : Skewness check using QQ-Plot
 
 ```{r}
 qqplt <- function(df, col) {
@@ -230,7 +225,7 @@ for (col in columns_to_check) {
 ```
 
 
-### Skewness removal
+### Step : 2.10 : Skewness removal using Log Transformation. 
 
 ```{r}
 # Applying Log Transformation on diameter. 
@@ -244,18 +239,18 @@ hist(reduced_df$Log_Est_Diameter, main = "Histogram of Diameter After Log Transf
 
 ```
 
-```{r}
+```{r, include=TRUE, echo=TRUE, results='markup'}
 # As we already have the `Log Transformation of Estimated Diameter`. We can drop `Est.Dia.in.KM.max.`. We will create two variables for `No Sampling` and for `SMOTE Sampling`.
 data1 <- reduced_df[,-which(names(reduced_df) == "Est.Dia.in.KM.max.")]
 dataSmote <- reduced_df[,-which(names(reduced_df) == "Est.Dia.in.KM.max.")]
-```
 
-```{r}
-str(data1$Hazardous)
 
 ```
 
-```{r}
+### Step : 2.11 : Checking for Multi-Collinearity. 
+
+```{r, include=TRUE, echo=TRUE, results='markup'}
+
 # Check for Multicollinearity using Variance Inflation Factor. 
 library(car)
 # Assuming Hazardous is a binary outcome (0 or 1)
@@ -265,7 +260,7 @@ logistic_model <- glm(Hazardous ~ ., data = data1, family = "binomial")
 vif_values <- car::vif(logistic_model)
 
 # Print variables with VIF greater than or equal to 10
-high_vif_variables <- names(vif_values)[vif_values >= 10]
+high_vif_variables <- names(vif_values)[vif_values >= 8]
 print(high_vif_variables)
 
 ```
@@ -276,8 +271,9 @@ print(high_vif_variables)
 # Assuming you want to remove specific columns from reduced_df
 columns_to_remove <- c("Orbital.Period", "Aphelion.Dist", "Mean.Motion")
 
-data1 <- reduced_df[, -which(names(reduced_df) %in% columns_to_remove)]
-dataSmote <- reduced_df[, -which(names(reduced_df) %in% columns_to_remove)]
+data1 <- data1[, -which(names(data1) %in% columns_to_remove)]
+dataSmote <- dataSmote[, -which(names(dataSmote) %in% columns_to_remove)]
+
 ```
 
 ```{r}
@@ -317,18 +313,34 @@ ggplot(dataSmote, aes(x = Hazardous, fill = Hazardous)) +
 
 
 ```
-
-### Pratiksha's Part 
+Note: Points to consider before jumping to your steps
 
 1. We have two variable with and without sampling. 
 2. without sampling: data1 
 3. with sampling: dataSmote
 
+
 Pending tasks to be implemented: 
+
+
+### Roger 
+
+1. Scatter plot for Diameter vs Velocity -- use data1 data set to do this
+2. Anova test for Diamter vs velocity w.r.t Hazardous
+
+
+
+### Pratiksha's Part 
+
 1. Logistic regression with data1(without sampling)
 2. Logistic regression with dataSmote(with sampling)
-3. Logistic regression with data 1(with sampling)
 
+
+### Sudhanshu 
+3. Logistic regression with data 1(without sampling - Hyper Parameter Tuning)
+
+
+### Roger
 1. Random Forest with data1(without sampling)
 2. Random Forest with dataSmote(with sampling)
 
