@@ -330,27 +330,6 @@ Pending tasks to be implemented:
 
 
 
-### Pratiksha's Part 
-#test
-1. Logistic regression with data1(without sampling)
-2. Logistic regression with dataSmote(with sampling)
-```{r}
-# Logistic Regression without Sampling
-
-
-data1$Hazardous <- as.factor(data1$Hazardous)
-logistic_model <- glm(Hazardous ~ ., data = data1, family = "binomial") 
-summary(logistic_model) 
-```
-
-```{r}
-
-# Logistic Regression with Sampling
-
-logistic_model_smote <- glm(Hazardous ~ ., data = dataSmote, family = "binomial")   
-summary(logistic_model_smote)
-```
-
 
 
 ### Sudhanshu 
@@ -379,10 +358,38 @@ summary(fit)
 ```
 
 ### Pratiksha's Part 
-
 1. Logistic regression with data1(without sampling)
 2. Logistic regression with dataSmote(with sampling)
 
+```{r}
+# Logistic Regression without Sampling
+
+data1$Hazardous <- as.factor(data1$Hazardous)
+logistic_model <- glm(Hazardous ~ ., data = data1, family = "binomial")
+summary(logistic_model)
+
+# ROC Curve
+library(pROC)
+roc_obj <- roc(data1$Hazardous, predict(logistic_model, type="response"))
+auc <- auc(roc_obj)
+print(paste("AUC =", round(auc, 3)))
+plot.roc(roc_obj, print.auc = TRUE)
+```
+
+```{r}
+# Logistic Regression with Sampling  
+
+dataSmote$Hazardous <- as.factor(dataSmote$Hazardous)  
+logistic_model_smote <- glm(Hazardous ~ ., data = dataSmote, family = "binomial")
+summary(logistic_model_smote)
+
+# ROC Curve
+roc_obj <- roc(dataSmote$Hazardous, predict(logistic_model_smote, type="response"))  
+auc <- auc(roc_obj)
+print(paste("AUC =", round(auc, 3)))
+plot.roc(roc_obj, print.auc = TRUE)
+
+```
 
 ### Sudhanshu 
 3. Logistic regression with data 1(without sampling - Hyper Parameter Tuning)
