@@ -252,7 +252,7 @@ dataSmote <- reduced_df[,-which(names(reduced_df) == "Est.Dia.in.KM.max.")]
 ```{r, include=TRUE, echo=TRUE, results='markup'}
 
 # Check for Multicollinearity using Variance Inflation Factor. 
-library(car)
+library(carData)
 # Assuming Hazardous is a binary outcome (0 or 1)
 logistic_model <- glm(Hazardous ~ ., data = data1, family = "binomial")
 
@@ -334,6 +334,9 @@ Pending tasks to be implemented:
 
 ### Sudhanshu 
 3. Logistic regression with data 1(without sampling - Hyper Parameter Tuning)
+```{r}
+
+```
 
 
 ### Roger
@@ -431,10 +434,197 @@ test_roc <- roc(dataSmote_test$Hazardous, test_preds)
 auc <- auc(test_roc)  
 print(paste("Test AUC =", round(auc, 3)))
 plot.roc(test_roc, print.auc = TRUE)
+
 ```
 
 ### Sudhanshu 
 3. Logistic regression with data 1(without sampling - Hyper Parameter Tuning)
+
+First lets run a logistic regression model
+
+```{r}
+# Load the required library for logistic regression
+library(glmnet)
+library(pROC)
+
+# Assuming 'Hazardous' is the target variable and other columns are features
+# Adjust column names and types as needed
+
+# Convert Hazardous to a binary factor
+data1$Hazardous <- as.factor(data1$Hazardous)
+
+# Split the data into training and testing sets
+set.seed(123)  # For reproducibility
+sample_indices <- sample(1:nrow(data1), 0.8 * nrow(data1))
+train_data <- data1[sample_indices, ]
+test_data <- data1[-sample_indices, ]
+
+# Fit logistic regression model
+logistic_model <- glm(Hazardous ~ ., data = train_data, family = "binomial")
+
+# Make predictions on the test set
+predictions <- predict(logistic_model, newdata = test_data, type = "response")
+
+# Convert probabilities to binary predictions
+binary_predictions <- ifelse(predictions > 0.5, 1, 0)
+
+# Evaluate the model
+conf_matrix <- table(binary_predictions, test_data$Hazardous)
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+auc <- pROC::roc(test_data$Hazardous, predictions)$auc
+
+# Classification Report
+classification_report <- caret::confusionMatrix(as.factor(binary_predictions), as.factor(test_data$Hazardous))
+print("Classification Report:")
+print(classification_report)
+
+# Display results
+print("Confusion Matrix:")
+print(conf_matrix)
+cat("Accuracy:", accuracy, "\n")
+cat("AUC Score:", auc, "\n")
+
+# ROC AUC Curve
+roc_curve <- roc(test_data$Hazardous, predictions)
+plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
+
+```
+Now let's do some hyperparameter tuning
+
+
+```{r}
+# Load the required library for logistic regression and hyperparameter tuning
+library(glmnet)
+library(pROC)
+
+# Assuming 'Hazardous' is the target variable and other columns are features
+# Adjust column names and types as needed
+
+# Convert Hazardous to a binary factor
+data1$Hazardous <- as.factor(data1$Hazardous)
+
+# Split the data into training and testing sets
+set.seed(123)  # For reproducibility
+sample_indices <- sample(1:nrow(data1), 0.8 * nrow(data1))
+train_data <- data1[sample_indices, ]
+test_data <- data1[-sample_indices, ]
+
+# Create a matrix of features and the target variable for training
+x_train <- model.matrix(Hazardous ~ . - 1, data = train_data)
+y_train <- as.numeric(train_data$Hazardous) - 1  # Convert to 0 and 1
+
+# Set up the hyperparameter grid
+alpha <- 0.5  # Regularization parameter
+lambdas <- seq(0.001, 1, by = 0.01)  # Strength of regularization
+
+# Perform cross-validated grid search
+cv_model <- cv.glmnet(x_train, y_train, alpha = alpha, lambda = lambdas, nfolds = 5, family = "binomial")
+
+# Get the best hyperparameters
+best_lambda <- cv_model$lambda.1se
+
+# Fit the final model with the best hyperparameters on the entire training set
+final_model <- glmnet(x_train, y_train, alpha = alpha, lambda = best_lambda, family = "binomial")
+
+# Make predictions on the test set
+x_test <- model.matrix(Hazardous ~ . - 1, data = test_data)
+predictions <- predict(final_model, newx = x_test, s = best_lambda, type = "response")
+
+# Convert probabilities to binary predictions
+binary_predictions <- ifelse(predictions > 0.5, 1, 0)
+
+# Evaluate the model
+conf_matrix <- table(binary_predictions, as.numeric(test_data$Hazardous) - 1)
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+auc <- pROC::roc(as.numeric(test_data$Hazardous) - 1, predictions)$auc
+
+# Display results
+print("Test Confusion Matrix:")
+print(conf_matrix)
+cat("Test Accuracy:", accuracy, "\n")
+cat("Test AUC Score:", auc, "\n")
+
+# Classification Report
+class_report <- caret::confusionMatrix(as.factor(binary_predictions), as.factor(as.numeric(test_data$Hazardous) - 1))
+print("Test Classification Report:")
+print(class_report)
+
+# ROC AUC Curve
+roc_curve <- roc(as.numeric(test_data$Hazardous) - 1, predictions)
+plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
+
+
+```
+There is no effect of hyperparameter tuning.
+
+
+
+```{r}
+# Load the required library for logistic regression and hyperparameter tuning
+library(glmnet)
+library(pROC)
+
+# Assuming 'Hazardous' is the target variable and other columns are features
+# Adjust column names and types as needed
+
+# Convert Hazardous to a binary factor
+data1$Hazardous <- as.factor(data1$Hazardous)
+
+# Split the data into training and testing sets
+set.seed(123)  # For reproducibility
+sample_indices <- sample(1:nrow(data1), 0.8 * nrow(data1))
+train_data <- data1[sample_indices, ]
+test_data <- data1[-sample_indices, ]
+
+# Create a matrix of features and the target variable for training
+x_train <- model.matrix(Hazardous ~ . - 1, data = train_data)
+y_train <- as.numeric(train_data$Hazardous) - 1  # Convert to 0 and 1
+
+# Set up the hyperparameter grid
+alpha <- 0.5  # Regularization parameter
+lambdas <- seq(0.001, 1, by = 0.01)  # Strength of regularization
+
+# Perform cross-validated grid search
+cv_model <- cv.glmnet(x_train, y_train, alpha = alpha, lambda = lambdas, nfolds = 5, family = "binomial")
+
+# Get the best hyperparameters
+best_lambda <- cv_model$lambda.1se
+
+# Fit the final model with the best hyperparameters on the entire training set
+final_model <- glmnet(x_train, y_train, alpha = alpha, lambda = best_lambda, family = "binomial")
+
+# Make predictions on the test set
+x_test <- model.matrix(Hazardous ~ . - 1, data = test_data)
+predictions <- predict(final_model, newx = x_test, s = best_lambda, type = "response")
+
+# Convert probabilities to binary predictions
+binary_predictions <- ifelse(predictions > 0.5, 1, 0)
+
+# Evaluate the model
+conf_matrix <- table(binary_predictions, as.numeric(test_data$Hazardous) - 1)
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+auc <- pROC::roc(as.numeric(test_data$Hazardous) - 1, predictions)$auc
+
+# Display results
+cat("Best Lambda (Regularization Strength):", best_lambda, "\n")
+print("Test Confusion Matrix:")
+print(conf_matrix)
+cat("Test Accuracy:", accuracy, "\n")
+cat("Test AUC Score:", auc, "\n")
+
+# Classification Report
+class_report <- caret::confusionMatrix(as.factor(binary_predictions), as.factor(as.numeric(test_data$Hazardous) - 1))
+print("Test Classification Report:")
+print(class_report)
+
+# ROC AUC Curve
+roc_curve <- roc(as.numeric(test_data$Hazardous) - 1, predictions)
+plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
+
+
+```
+
+
 
 
 ### Roger
