@@ -363,9 +363,6 @@ summary(fit)
 
 ```{r}
 
-library(caret)
-library(pROC)
-
 # Train/Test split without sampling 
 set.seed(123)
 trainIndex <- createDataPartition(data1$Hazardous, times = 1, p = 0.7, list = FALSE)  
@@ -373,71 +370,67 @@ data1_train <- data1[trainIndex, ]
 data1_test <- data1[-trainIndex, ]
 
 # Train Logistic Regression Model
-data1_train$Hazardous <- as.factor(data1_train$Hazardous) 
+data1_train$Hazardous <- factor(data1_train$Hazardous) 
 logistic_model <- glm(Hazardous ~ ., data = data1_train, family = "binomial")
 
-# Model summary  
-summary(logistic_model)   
+# Make predictions on training set
+train_preds <- predict(logistic_model, newdata = data1_train, type="response")
+train_preds <- ifelse(train_preds > 0.5, 1, 0)
 
-# Make predictions on test set  
-preds_test <- predict(logistic_model, newdata = data1_test , type="response")
+# Train accuracy
+train_acc <- mean(train_preds == data1_train$Hazardous)
+print(paste("Train Accuracy =", round(train_acc, 3)))  
 
-# Calculate test accuracy
-test_acc <- mean((preds_test > 0.5) == (data1_test$Hazardous))
+# Make predictions on test set
+test_preds <- predict(logistic_model, newdata = data1_test, type="response")
+test_preds <- ifelse(test_preds > 0.5, 1, 0)  
+
+# Test accuracy
+test_acc <- mean(test_preds == data1_test$Hazardous) 
 print(paste("Test Accuracy =", round(test_acc, 3)))
 
-# Make predictions on train set  
-preds_train <- predict(logistic_model, newdata = data1_train , type="response")
-
-# Calculate train accuracy
-train_acc <- mean((preds_train > 0.5) == (data1_train$Hazardous))
-print(paste("Train Accuracy =", round(train_acc, 3)))
-
-# Plot ROC curve on test set 
-test_roc <- roc(data1_test$Hazardous, preds_test)
+# Plot ROC curve on test set
+test_roc <- roc(data1_test$Hazardous, preds)  
 auc <- auc(test_roc)
-print(paste("Test AUC =", round(auc, 3)))  
+print(paste("Test AUC =", round(auc, 3)))
 plot.roc(test_roc, print.auc = TRUE)
+
 
 ```
 
 ```{r}
-library(caret)
-library(pROC)
 
 # Train/Test split with sampling
 set.seed(123)
-trainIndex <- createDataPartition(dataSmote$Hazardous, times = 1, p = 0.7, list = FALSE)
+trainIndex <- createDataPartition(dataSmote$Hazardous, times = 1, p = 0.7, list = FALSE) 
 dataSmote_train <- dataSmote[trainIndex, ]
 dataSmote_test <- dataSmote[-trainIndex, ]
 
-# Train Model 
-dataSmote_train$Hazardous <- as.factor(dataSmote_train$Hazardous)
-logistic_model_smote <- glm(Hazardous ~ ., data = dataSmote_train, family = "binomial")  
+# Train Logistic Regression Model 
+dataSmote_train$Hazardous <- factor(dataSmote_train$Hazardous)
+logistic_model_smote <- glm(Hazardous ~ ., data = dataSmote_train, family = "binomial")
 
-# Model Summary
-summary(logistic_model_smote)  
-
-# Predictions on test set
-preds_test <- predict(logistic_model_smote, newdata = dataSmote_test, type = "response")  
-
-# Test accuracy 
-test_acc <- mean((preds_test > 0.5) == (dataSmote_test$Hazardous))
-print(paste("Test Accuracy =", round(test_acc, 3)))
-
-# Predictions on train set
-preds_train <- predict(logistic_model_smote, newdata = dataSmote_train, type = "response")
+# Make predictions on training set  
+train_preds <- predict(logistic_model_smote, newdata = dataSmote_train, type="response")
+train_preds <- ifelse(train_preds > 0.5, 1, 0)  
 
 # Train accuracy
-train_acc <- mean((preds_train > 0.5) == (dataSmote_train$Hazardous))
-print(paste("Train Accuracy =", round(train_acc, 3)))
+train_acc <- mean(train_preds == dataSmote_train$Hazardous)
+print(paste("Train Accuracy =", round(train_acc, 3)))   
 
-# Test ROC Curve
-test_roc <- roc(dataSmote_test$Hazardous, preds_test)
-auc <- auc(test_roc) 
+# Make predictions on test set 
+test_preds <- predict(logistic_model_smote, newdata = dataSmote_test, type="response") 
+test_preds <- ifelse(test_preds > 0.5, 1, 0)  
+
+# Test accuracy
+test_acc <- mean(test_preds == dataSmote_test$Hazardous)  
+print(paste("Test Accuracy =", round(test_acc, 3)))
+
+# Plot ROC Curve on test set
+test_roc <- roc(dataSmote_test$Hazardous, test_preds)
+auc <- auc(test_roc)  
 print(paste("Test AUC =", round(auc, 3)))
 plot.roc(test_roc, print.auc = TRUE)
-
 ```
 
 ### Sudhanshu 
