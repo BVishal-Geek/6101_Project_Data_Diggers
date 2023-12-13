@@ -276,7 +276,11 @@ dataSmote <- dataSmote[, -which(names(dataSmote) %in% columns_to_remove)]
 
 ```
 
-```{r}
+## Step : 3 : Data Transformation
+
+### Step : 3.1 : Checking for the distribution of hazardous asteroids
+
+```{r, include=TRUE, echo=TRUE, results='markup'}
 # Count plot using ggplot2
 ggplot(data1, aes(x = Hazardous, fill = Hazardous)) +
   geom_bar() +
@@ -287,7 +291,9 @@ ggplot(data1, aes(x = Hazardous, fill = Hazardous)) +
   theme_minimal()
 ```
 
-```{r}
+### Part : 3.2 : SMOTE Analysis
+
+```{r, include=TRUE, echo=TRUE, results='markup'}
 
 library(ROSE)
 library(smotefamily)
@@ -313,136 +319,43 @@ ggplot(dataSmote, aes(x = Hazardous, fill = Hazardous)) +
 
 
 ```
-Note: Points to consider before jumping to your steps
 
-1. We have two variable with and without sampling. 
-2. without sampling: data1 
-3. with sampling: dataSmote
+## Part : 4 : Article data confirmation
 
-
-Pending tasks to be implemented: 
-
-
-### Roger 
-
-1. Scatter plot for Diameter vs Velocity -- use data1 data set to do this
-2. Anova test for Diamter vs velocity w.r.t Hazardous
-
-
-
-
-
-### Sudhanshu 
-3. Logistic regression with data 1(without sampling - Hyper Parameter Tuning)
-```{r}
-
-```
-
-
-### Roger
-1. Random Forest with data1(without sampling)
-2. Random Forest with dataSmote(with sampling)
-
-### Roger 
-
-1. Scatter plot for Diameter vs Velocity -- use data1 to do this
-2. Anova test for Diamter vs velocity w.r.t Hazardous
-#we have diameter column as Est Dia in KM MAX
-```{r}
-ggplot(data1, aes(x = Log_Est_Diameter, y = Relative.Velocity.km.per.sec)) +
-  geom_point() +
+```{r, include=TRUE, echo=TRUE, results='markup'}
+ggplot(Filtered_data, aes(x = Relative.Velocity.km.per.sec, y = Est.Dia.in.KM.max. )) +
+  geom_point(aes(shape = factor(Hazardous), color = factor(Hazardous))) +
   theme_minimal() +
-  labs(x = "Log Estimated Diameter", y = "Relative Velocity (km/sec)", title = "Scatter Plot of Log Estimated Diameter vs Relative Velocity")
+  labs(x = "Relative Velocity (km/sec)", y = "Estimated Diameter", title = "Scatter Plot of Log Estimated Diameter vs Relative Velocity")
 
-fit <- aov(Log_Est_Diameter ~ Relative.Velocity.km.per.sec * Hazardous, data = data1)
-summary(fit)
-
-
-```
-
-### Pratiksha's Part 
-1. Logistic regression with data1(without sampling)
-2. Logistic regression with dataSmote(with sampling)
-
-```{r}
-
-# Train/Test split without sampling 
-set.seed(123)
-trainIndex <- createDataPartition(data1$Hazardous, times = 1, p = 0.7, list = FALSE)  
-data1_train <- data1[trainIndex, ]
-data1_test <- data1[-trainIndex, ]
-
-# Train Logistic Regression Model
-data1_train$Hazardous <- factor(data1_train$Hazardous) 
-logistic_model <- glm(Hazardous ~ ., data = data1_train, family = "binomial")
-
-# Make predictions on training set
-train_preds <- predict(logistic_model, newdata = data1_train, type="response")
-train_preds <- ifelse(train_preds > 0.5, 1, 0)
-
-# Train accuracy
-train_acc <- mean(train_preds == data1_train$Hazardous)
-print(paste("Train Accuracy =", round(train_acc, 3)))  
-
-# Make predictions on test set
-test_preds <- predict(logistic_model, newdata = data1_test, type="response")
-test_preds <- ifelse(test_preds > 0.5, 1, 0)  
-
-# Test accuracy
-test_acc <- mean(test_preds == data1_test$Hazardous) 
-print(paste("Test Accuracy =", round(test_acc, 3)))
-
-# Plot ROC curve on test set
-test_roc <- roc(data1_test$Hazardous, preds)  
-auc <- auc(test_roc)
-print(paste("Test AUC =", round(auc, 3)))
-plot.roc(test_roc, print.auc = TRUE)
-
+logisticModel <- glm(Hazardous ~ Est.Dia.in.KM.max. + Relative.Velocity.km.per.sec, data = Filtered_data, family = "binomial")
+summary(logisticModel)
 
 ```
 
-```{r}
 
-# Train/Test split with sampling
-set.seed(123)
-trainIndex <- createDataPartition(dataSmote$Hazardous, times = 1, p = 0.7, list = FALSE) 
-dataSmote_train <- dataSmote[trainIndex, ]
-dataSmote_test <- dataSmote[-trainIndex, ]
+### Checking for the logistic model GOF
+```{r, include=TRUE, echo=TRUE, results='markup'}
+# The reason to check the GOF is to assess if the model has performed well in giving the P-Value.
 
-# Train Logistic Regression Model 
-dataSmote_train$Hazardous <- factor(dataSmote_train$Hazardous)
-logistic_model_smote <- glm(Hazardous ~ ., data = dataSmote_train, family = "binomial")
+nullDeviance <- summary(logisticModel)$null.deviance
+residualDeviance <- summary(logisticModel)$deviance
 
-# Make predictions on training set  
-train_preds <- predict(logistic_model_smote, newdata = dataSmote_train, type="response")
-train_preds <- ifelse(train_preds > 0.5, 1, 0)  
+dfNull <- summary(logisticModel)$df.null
+dfResidual <- summary(logisticModel)$df.residual
 
-# Train accuracy
-train_acc <- mean(train_preds == dataSmote_train$Hazardous)
-print(paste("Train Accuracy =", round(train_acc, 3)))   
+chiSq <- pchisq(nullDeviance - residualDeviance, dfNull - dfResidual, lower.tail = FALSE)
 
-# Make predictions on test set 
-test_preds <- predict(logistic_model_smote, newdata = dataSmote_test, type="response") 
-test_preds <- ifelse(test_preds > 0.5, 1, 0)  
-
-# Test accuracy
-test_acc <- mean(test_preds == dataSmote_test$Hazardous)  
-print(paste("Test Accuracy =", round(test_acc, 3)))
-
-# Plot ROC Curve on test set
-test_roc <- roc(dataSmote_test$Hazardous, test_preds)
-auc <- auc(test_roc)  
-print(paste("Test AUC =", round(auc, 3)))
-plot.roc(test_roc, print.auc = TRUE)
-
+cat("P-Value for comparison of null deviance and model with predictors: ", chiSq)
 ```
 
-### Sudhanshu 
-3. Logistic regression with data 1(without sampling - Hyper Parameter Tuning)
 
-First lets run a logistic regression model
+## Part : 5 : Data Modelling
 
-```{r}
+### Part : 5.1 : Logistic regression with data 1(without sampling)
+
+
+```{r, include=TRUE, echo=TRUE, results='markup'}
 # Load the required library for logistic regression
 library(glmnet)
 library(pROC)
@@ -491,8 +404,9 @@ plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
 ```
 Now let's do some hyperparameter tuning
 
+### Part : 5.2 : Logistic regression with data 1(without sampling - Hyperparameter Tuning)
 
-```{r}
+```{r, include=TRUE, echo=TRUE, results='markup'}
 # Load the required library for logistic regression and hyperparameter tuning
 library(glmnet)
 library(pROC)
@@ -557,9 +471,9 @@ plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
 ```
 There is no effect of hyperparameter tuning.
 
+### Part : 5.3 : Logistic regression with dataSmote(with sampling - Hyperparameter Tuning)
 
-
-```{r}
+```{r, include=TRUE, echo=TRUE, results='markup'}
 # Load the required library for logistic regression and hyperparameter tuning
 library(glmnet)
 library(pROC)
@@ -625,12 +539,9 @@ plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
 ```
 
 
+### Part : 5.4 : Random Forest with data 1(without sampling)
 
-
-### Roger
-1. Random Forest with data1(without sampling)
-2. Random Forest with dataSmote(with sampling)
-```{r}
+```{r, include=TRUE, echo=TRUE, results='markup'}
 library(randomForest)
 library(pROC)
 library(caret)
@@ -662,9 +573,11 @@ accuracy
 accuracy3 <- sum(predictions == trainData$Hazardous) / nrow(trainData)
 accuracy3
 
+```
 
+### Part : 5.5 : Random Forest with dataSmote(with sampling)
 
-##Random Forest with dataSmote
+```{r, include=TRUE, echo=TRUE, results='markup'}
 
 set.seed(123) # For reproducibility
 splitIndex1 <- createDataPartition(data1$Hazardous, p = .70, list = FALSE, times = 1)
@@ -692,3 +605,4 @@ accuracy <- sum(predictions == testData1$Hazardous) / nrow(testData1)
 accuracy
 accuracy1 <- sum(predictions == trainData1$Hazardous) / nrow(trainData1)
 accuracy1
+```
