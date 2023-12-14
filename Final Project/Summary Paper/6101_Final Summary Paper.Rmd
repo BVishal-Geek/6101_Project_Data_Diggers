@@ -540,7 +540,7 @@ data1$Hazardous <- as.factor(data1$Hazardous)
 
 # Split the data into training and testing sets
 set.seed(123)  # For reproducibility
-sample_indices <- sample(1:nrow(data1), 0.8 * nrow(data1))
+sample_indices <- sample(1:nrow(data1), 0.7 * nrow(data1))
 train_data <- data1[sample_indices, ]
 test_data <- data1[-sample_indices, ]
 
@@ -591,74 +591,7 @@ data1$Hazardous <- as.factor(data1$Hazardous)
 
 # Split the data into training and testing sets
 set.seed(123)  # For reproducibility
-sample_indices <- sample(1:nrow(data1), 0.8 * nrow(data1))
-train_data <- data1[sample_indices, ]
-test_data <- data1[-sample_indices, ]
-
-# Create a matrix of features and the target variable for training
-x_train <- model.matrix(Hazardous ~ . - 1, data = train_data)
-y_train <- as.numeric(train_data$Hazardous) - 1  # Convert to 0 and 1
-
-# Set up the hyperparameter grid
-alpha <- 0.5  # Regularization parameter
-lambdas <- seq(0.001, 1, by = 0.01)  # Strength of regularization
-
-# Perform cross-validated grid search
-cv_model <- cv.glmnet(x_train, y_train, alpha = alpha, lambda = lambdas, nfolds = 5, family = "binomial")
-
-# Get the best hyperparameters
-best_lambda <- cv_model$lambda.1se
-
-# Fit the final model with the best hyperparameters on the entire training set
-final_model <- glmnet(x_train, y_train, alpha = alpha, lambda = best_lambda, family = "binomial")
-
-# Make predictions on the test set
-x_test <- model.matrix(Hazardous ~ . - 1, data = test_data)
-predictions <- predict(final_model, newx = x_test, s = best_lambda, type = "response")
-
-# Convert probabilities to binary predictions
-binary_predictions <- ifelse(predictions > 0.5, 1, 0)
-
-# Evaluate the model
-conf_matrix <- table(binary_predictions, as.numeric(test_data$Hazardous) - 1)
-accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
-auc <- pROC::roc(as.numeric(test_data$Hazardous) - 1, predictions)$auc
-
-# Display results
-print("Test Confusion Matrix:")
-print(conf_matrix)
-cat("Test Accuracy:", accuracy, "\n")
-cat("Test AUC Score:", auc, "\n")
-
-# Classification Report
-class_report <- caret::confusionMatrix(as.factor(binary_predictions), as.factor(as.numeric(test_data$Hazardous) - 1))
-print("Test Classification Report:")
-print(class_report)
-
-# ROC AUC Curve
-roc_curve <- roc(as.numeric(test_data$Hazardous) - 1, predictions)
-plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
-
-
-```
-There is no effect of hyperparameter tuning.
-
-### Part : 5.3 : Logistic regression with dataSmote(with sampling - Hyperparameter Tuning)
-
-```{r, include=TRUE, echo=FALSE, results='markup'}
-# Load the required library for logistic regression and hyperparameter tuning
-library(glmnet)
-library(pROC)
-
-# Assuming 'Hazardous' is the target variable and other columns are features
-# Adjust column names and types as needed
-
-# Convert Hazardous to a binary factor
-data1$Hazardous <- as.factor(data1$Hazardous)
-
-# Split the data into training and testing sets
-set.seed(123)  # For reproducibility
-sample_indices <- sample(1:nrow(data1), 0.8 * nrow(data1))
+sample_indices <- sample(1:nrow(data1), 0.7 * nrow(data1))
 train_data <- data1[sample_indices, ]
 test_data <- data1[-sample_indices, ]
 
@@ -711,13 +644,85 @@ plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
 ```
 
 
+
+### Part : 5.3 : Logistic regression with dataSmote(with sampling using SMOTE - Hyperparameter Tuning)
+
+```{r, include=TRUE, echo=FALSE, results='markup'}
+# Load the required library for logistic regression and hyperparameter tuning
+library(glmnet)
+library(pROC)
+
+# Assuming 'Hazardous' is the target variable and other columns are features
+# Adjust column names and types as needed
+
+# Convert Hazardous to a binary factor
+dataSmote$Hazardous <- as.factor(dataSmote$Hazardous)
+
+# Split the data into training and testing sets
+set.seed(123)  # For reproducibility
+sample_indices <- sample(1:nrow(dataSmote), 0.7 * nrow(dataSmote))
+train_data <- dataSmote[sample_indices, ]
+test_data <- dataSmote[-sample_indices, ]
+
+# Create a matrix of features and the target variable for training
+x_train <- model.matrix(Hazardous ~ . - 1, data = train_data)
+y_train <- as.numeric(train_data$Hazardous) - 1  # Convert to 0 and 1
+
+# Set up the hyperparameter grid
+alpha <- 0.5  # Regularization parameter
+lambdas <- seq(0.001, 1, by = 0.01)  # Strength of regularization
+
+# Perform cross-validated grid search
+cv_model <- cv.glmnet(x_train, y_train, alpha = alpha, lambda = lambdas, nfolds = 5, family = "binomial")
+
+# Get the best hyperparameters
+best_lambda <- cv_model$lambda.1se
+
+# Fit the final model with the best hyperparameters on the entire training set
+final_model <- glmnet(x_train, y_train, alpha = alpha, lambda = best_lambda, family = "binomial")
+
+# Make predictions on the test set
+x_test <- model.matrix(Hazardous ~ . - 1, data = test_data)
+predictions <- predict(final_model, newx = x_test, s = best_lambda, type = "response")
+
+# Convert probabilities to binary predictions
+binary_predictions <- ifelse(predictions > 0.5, 1, 0)
+
+# Evaluate the model
+conf_matrix <- table(binary_predictions, as.numeric(test_data$Hazardous) - 1)
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+auc <- pROC::roc(as.numeric(test_data$Hazardous) - 1, predictions)$auc
+
+# Display results
+print("Test Confusion Matrix:")
+print(conf_matrix)
+cat("Test Accuracy:", accuracy, "\n")
+cat("Test AUC Score:", auc, "\n")
+
+# Classification Report
+class_report <- caret::confusionMatrix(as.factor(binary_predictions), as.factor(as.numeric(test_data$Hazardous) - 1))
+print("Test Classification Report:")
+print(class_report)
+
+# ROC AUC Curve
+roc_curve <- roc(as.numeric(test_data$Hazardous) - 1, predictions)
+plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
+
+
+```
+
+
+
+
 ### Part : 5.4 : Random Forest with data 1(without sampling)
+
 
 ```{r, include=TRUE, echo=FALSE, results='markup'}
 library(randomForest)
 library(pROC)
 library(caret)
-#Random Forest with data1
+
+# Random Forest with data1
 set.seed(123) # For reproducibility
 splitIndex <- createDataPartition(data1$Hazardous, p = .70, list = FALSE, times = 1)
 trainData <- data1[splitIndex,]
@@ -733,17 +738,28 @@ predictions <- predict(rf_model, testData)
 probabilities <- predict(rf_model, testData, type="prob")
 
 # Compute AUC
-roc_result <- roc(testData$Hazardous, probabilities[,2]) # Assuming second column is the positive class
-auc(roc_result)
+roc_result <- roc(testData$Hazardous, probabilities[,2]) # Assuming the second column is the positive class
+auc_score <- auc(roc_result)
+
+# Print AUC score
+cat("AUC Score:", auc_score, "\n")
 
 # Plot ROC curve
 plot(roc_result, main="ROC Curve")
 
 # Calculate accuracy
 accuracy <- sum(predictions == testData$Hazardous) / nrow(testData)
-accuracy
-accuracy3 <- sum(predictions == trainData$Hazardous) / nrow(trainData)
-accuracy3
+cat("Test Accuracy:", accuracy, "\n")
+
+# Classification Report
+class_report <- confusionMatrix(predictions, testData$Hazardous)
+print("Test Classification Report:")
+print(class_report)
+
+# Confusion Matrix
+conf_matrix <- table(predictions, testData$Hazardous)
+print("Test Confusion Matrix:")
+print(conf_matrix)
 
 ```
 
@@ -778,6 +794,53 @@ accuracy
 accuracy1 <- sum(predictions == trainData1$Hazardous) / nrow(trainData1)
 accuracy1
 ```
+
+```{r}
+library(randomForest)
+library(pROC)
+library(caret)
+
+# Random Forest with data1
+set.seed(123) # For reproducibility
+splitIndex <- createDataPartition(dataSmote$Hazardous, p = .70, list = FALSE, times = 1)
+trainData <- dataSmote[splitIndex,]
+testData <- dataSmote[-splitIndex,]
+
+# Train the model
+rf_model <- randomForest(Hazardous ~ ., data = trainData)
+
+# Make predictions
+predictions <- predict(rf_model, testData)
+
+# Get probabilities
+probabilities <- predict(rf_model, testData, type="prob")
+
+# Compute AUC
+roc_result <- roc(testData$Hazardous, probabilities[,2]) # Assuming the second column is the positive class
+auc_score <- auc(roc_result)
+
+# Print AUC score
+cat("AUC Score:", auc_score, "\n")
+
+# Plot ROC curve
+plot(roc_result, main="ROC Curve")
+
+# Calculate accuracy
+accuracy <- sum(predictions == testData$Hazardous) / nrow(testData)
+cat("Test Accuracy:", accuracy, "\n")
+
+# Classification Report
+class_report <- confusionMatrix(predictions, testData$Hazardous)
+print("Test Classification Report:")
+print(class_report)
+
+# Confusion Matrix
+conf_matrix <- table(predictions, testData$Hazardous)
+print("Test Confusion Matrix:")
+print(conf_matrix)
+
+```
+
 
 ## Conclusion
 <span style="font-size: 12px;  text-align: justify;">
