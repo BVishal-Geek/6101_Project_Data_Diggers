@@ -523,9 +523,16 @@ cat("P-Value for comparison of null deviance and model with predictors: ", chiSq
 ## Part : 5 : Data Modelling
 
 #### Smart Question 2: Which classification models are capable of effectively distinguishing between hazardous and non-hazardous asteroids?
+<span style="font-size: 12px;  text-align: justify;">
+<p>In the modeling phase, an extensive exploration of various machine learning models was conducted, with a focus on achieving optimal predictive performance. Among the models evaluated, logistic regression and random forest exhibited superior performance, showing robust capabilities in accurately predicting hazardous asteroids. Consequently, these models were selected for inclusion in the final predictive framework.</p>
+</span>
 
 ### Part : 5.1 : Logistic regression with data 1(without sampling)
-
+<span style="font-size: 12px;  text-align: justify;">
+<p>
+We employed logistic regression due to its simplicity, interpretability, and suitability for binary classification tasks. Logistic regression assumes a linear relationship between features and the log-odds of the target variable, making it effective when the underlying patterns in the data are approximately linear. The model's interpretability, especially in terms of understanding the impact of each feature, is valuable for insights into the factors influencing the classification of hazardous asteroids. 
+Initially, logistic regression was implemented without any sampling techniques to gain insights into the model's performance on the raw dataset. This initial exploration provided valuable baseline results, setting the foundation for subsequent experimentation and model refinement.</p>
+</span>
 
 ```{r, include=TRUE, echo=FALSE, results='markup'}
 # Load the required library for logistic regression
@@ -574,9 +581,15 @@ roc_curve <- roc(test_data$Hazardous, predictions)
 plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
 
 ```
-Now let's do some hyperparameter tuning
 
-### Part : 5.2 : Logistic regression with data 1(without sampling - Hyperparameter Tuning)
+
+### Part : 5.2 : Logistic regression with data 1(Hyperparameter Tuning - without sampling)
+
+<span style="font-size: 12px;  text-align: justify;">
+<p>In the hyperparameter tuning process for logistic regression, we utilized the `glmnet` library in R and specifically explored the regularization parameter (`lambda`) and the regularization type (`alpha`). The parameter grid was set up with a range of regularization strengths (`lambdas`) and a fixed value for the elastic net mixing parameter (`alpha`). We performed a cross-validated grid search (`cv.glmnet`) using 5-fold cross-validation to identify the optimal regularization strength that resulted in the best model performance on the training set.
+
+The selected hyperparameters were those corresponding to the model with the highest average performance across the cross-validation folds (`cv_model$lambda.1se`). The identified best hyperparameters were then used to train the final logistic regression model on the entire training set. The model was subsequently evaluated on the test set, and performance metrics such as accuracy, AUC score, confusion matrix, and a classification report were generated to assess the model's effectiveness on unseen data. The chosen hyperparameters and the overall process aimed to strike a balance between model complexity and generalization, ensuring optimal performance on the given dataset.</p>
+</span>
 
 ```{r, include=TRUE, echo=FALSE, results='markup'}
 # Load the required library for logistic regression and hyperparameter tuning
@@ -644,8 +657,16 @@ plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
 ```
 
 
+<span style="font-size: 12px;  text-align: justify;">
+<p>Following hyperparameter tuning, the logistic regression model achieved a similar accuracy of 93.8% on the test set, showcasing the robustness of the initial model. The AUC score remained consistently high at 0.98. The confusion matrix and classification report indicate a slight enhancement in sensitivity (97.3%) while maintaining specificity at 75.4%. The hyperparameter tuning process, specifically adjusting the regularization strength (lambda), contributed to fine-tuning the model and optimizing its performance. The Kappa statistic remained consistent, suggesting sustained substantial agreement. Overall, the tuned logistic regression model demonstrated stability and maintained a high level of accuracy and predictive power on the given dataset.</p>
+</span>
+
 
 ### Part : 5.3 : Logistic regression with dataSmote(with sampling using SMOTE - Hyperparameter Tuning)
+
+<span style="font-size: 12px;  text-align: justify;">
+<p>Then we used SMOTE oversampled dataset with hyperparameter tuned model</p>
+</span>
 
 ```{r, include=TRUE, echo=FALSE, results='markup'}
 # Load the required library for logistic regression and hyperparameter tuning
@@ -712,9 +733,15 @@ plot(roc_curve, main = "ROC Curve", col = "blue", lwd = 2)
 ```
 
 
-
+<span style="font-size: 12px;  text-align: justify;">
+<p>The accuracy remains high at 92.2%, showcasing the model's ability to make correct predictions. The area under the ROC curve (AUC Score) is 0.977, indicating strong discriminative power in distinguishing between hazardous and non-hazardous instances.</p>
+</span>
 
 ### Part : 5.4 : Random Forest with data 1(without sampling)
+
+<span style="font-size: 12px;  text-align: justify;">
+<p> Random forest was chosen as an ensemble learning method to enhance predictive performance. This technique builds multiple decision trees and aggregates their predictions, enabling the model to capture non-linear relationships and complex interactions among features. Random forest excels at handling intricate patterns in the data and is more robust to overfitting compared to individual models. The combination of logistic regression for its simplicity and interpretability with random forest for its ability to capture complex patterns yielded a robust and effective approach for predicting asteroid hazard classification.</p>
+</span>
 
 
 ```{r, include=TRUE, echo=FALSE, results='markup'}
@@ -763,37 +790,18 @@ print(conf_matrix)
 
 ```
 
+<span style="font-size: 12px;  text-align: justify;">
+<p> The random forest model exhibits exceptional performance with an AUC score of 0.996 and a test accuracy of 99%. This suggests that the model is highly effective in distinguishing between hazardous and non-hazardous asteroids. The confusion matrix further illustrates the model's proficiency, with minimal misclassifications. It correctly identifies 702 non-hazardous asteroids (class 0) and 128 hazardous asteroids (class 1), demonstrating an outstanding sensitivity of 99.9% and specificity of 94.8%.
+
+The high accuracy and balanced accuracy, along with the precision and recall values close to 1, indicate that the random forest model excels in both correctly identifying hazardous asteroids and avoiding false positives. Overall, the model's robust performance and strong predictive capabilities make it a reliable choice for asteroid hazard classification.</p>
+</span>
+
+
 ### Part : 5.5 : Random Forest with dataSmote(with sampling)
 
-```{r, include=TRUE, echo=FALSE, results='markup'}
-
-set.seed(123) # For reproducibility
-splitIndex1 <- createDataPartition(data1$Hazardous, p = .70, list = FALSE, times = 1)
-trainData1 <- dataSmote[splitIndex,]
-testData1 <- dataSmote[-splitIndex,]
-
-# Train the model
-rf_model <- randomForest(Hazardous ~ ., data = trainData1)
-
-# Make predictions
-predictions <- predict(rf_model, testData1)
-
-# Get probabilities
-probabilities <- predict(rf_model, testData1, type="prob")
-
-# Compute AUC
-roc_result <- roc(testData1$Hazardous, probabilities[,2]) # Assuming second column is the positive class
-auc(roc_result)
-
-# Plot ROC curve
-plot(roc_result, main="Smote ROC Curve")
-
-# Calculate accuracy
-accuracy <- sum(predictions == testData1$Hazardous) / nrow(testData1)
-accuracy
-accuracy1 <- sum(predictions == trainData1$Hazardous) / nrow(trainData1)
-accuracy1
-```
+<span style="font-size: 12px;  text-align: justify;">
+<p>Then we used SMOTE oversampled dataset with the random forest model</p>
+</span>
 
 ```{r}
 library(randomForest)
@@ -840,6 +848,12 @@ print("Test Confusion Matrix:")
 print(conf_matrix)
 
 ```
+
+<span style="font-size: 12px;  text-align: justify;">
+<p>The performance of the random forest model on the oversampled dataset using SMOTE is truly remarkable. The AUC score of 1 indicates perfect discriminatory ability, and the test accuracy of 99.8% further emphasizes the model's exceptional predictive power. The confusion matrix shows that the model correctly predicts all non-hazardous asteroids (class 0) and the majority of hazardous asteroids (class 1), resulting in a sensitivity of 99.6% and specificity of 100%.
+
+The high values for sensitivity, specificity, and overall accuracy demonstrate that the model is capable of effectively identifying hazardous and non-hazardous asteroids even after oversampling. The balanced accuracy of 99.8% highlights the model's ability to maintain high performance across both classes. In summary, the random forest model, when trained on the oversampled dataset, showcases outstanding capabilities in asteroid hazard classification, making it a robust and reliable choice for this task.</p>
+</span>
 
 
 ## Conclusion
