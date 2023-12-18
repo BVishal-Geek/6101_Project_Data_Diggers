@@ -11,6 +11,10 @@ Our primary objectives include understanding the physical and orbital characteri
 ### Dataset: 
 Our dataset is available as Nasa Asteroids Classification: https://www.kaggle.com/datasets/shrutimehta/nasa-asteroids-classification at Kaggle. All the data is from the (http://neo.jpl.nasa.gov/). This API is maintained by Space Rocks Team: David Greenfield, Arezu Sarvestani, Jason English, and Peter Baunach. The dataset consists of 4687 data instances (rows) and 40 features (columns).
 
+### Run Code:
+For the final project, navigate to the `main` branch, access the `Final Project` folder, and execute the `Main.rmd` file. <br>
+For the midterm project, go to the `main` branch, open the `Midterm Project` folder, then proceed to the `Asteroid_Classification` subfolder and execute the `Asteroid_Classification.rmd` file.
+
 ### Authors:
 Team Members:
 1.	Vishal Bakshi
